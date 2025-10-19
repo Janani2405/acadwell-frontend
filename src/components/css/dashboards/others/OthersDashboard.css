@@ -1,0 +1,878 @@
+/* OthersDashboard.css - Fully Responsive with Mobile Sidebar */
+
+/* ===== BASE STYLES ===== */
+.others-dashboard-wrapper {
+  @apply flex min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 text-white relative;
+}
+
+.others-dashboard-main {
+  @apply flex flex-col flex-1 w-full;
+}
+
+.others-dashboard-content {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6 p-6;
+}
+
+/* ===== MOBILE MENU TOGGLE (Hidden on Desktop) ===== */
+.mobile-menu-toggle {
+  @apply lg:hidden fixed top-4 left-4 z-[60] p-2 bg-black/50 backdrop-blur-md rounded-lg border border-white/20 cursor-pointer;
+}
+
+.menu-icon {
+  @apply w-6 h-6 text-white;
+}
+
+/* ===== SIDEBAR OVERLAY (Mobile/Tablet) ===== */
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300;
+}
+
+
+
+.sidebar-overlay.visible {
+  @apply opacity-100 pointer-events-auto;
+}
+
+/* ===== SIDEBAR STYLES ===== */
+.others-sidebar {
+  @apply fixed lg:static top-0 left-0 h-screen w-64 bg-black/90 backdrop-blur-xl border-r border-white/10 p-6 z-50 transition-transform duration-300 overflow-y-auto;
+}
+
+/* Mobile: Sidebar slides in from left */
+.others-sidebar.mobile-hidden {
+  @apply -translate-x-full lg:translate-x-0;
+}
+
+.others-sidebar.mobile-visible {
+  @apply translate-x-0;
+}
+
+.sidebar-header {
+  @apply mb-10;
+}
+
+.sidebar-logo {
+  @apply text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent;
+}
+
+.role-badge {
+  @apply inline-block px-3 py-1 text-xs font-medium bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full text-white mt-2;
+}
+
+.sidebar-nav ul {
+  @apply space-y-3;
+}
+
+.nav-item {
+  @apply flex items-center space-x-3 text-gray-300 hover:text-white cursor-pointer transition-colors px-3 py-2 rounded-lg hover:bg-white/10;
+}
+
+.nav-item.active {
+  @apply bg-white/10 text-white;
+}
+
+.nav-icon {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+/* ===== TOPBAR STYLES ===== */
+.others-topbar {
+  @apply h-16 flex items-center justify-between px-4 lg:px-6 bg-black/30 backdrop-blur-lg border-b border-white/10;
+}
+
+.topbar-left {
+  @apply flex items-center flex-1;
+}
+
+.search-wrapper {
+  @apply relative w-full max-w-md ml-0 lg:ml-0;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400;
+}
+
+.search-input {
+  @apply w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500;
+}
+
+.topbar-right {
+  @apply flex items-center space-x-2 lg:space-x-4;
+}
+
+.icon-btn {
+  @apply relative p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors;
+}
+
+.notification-btn {
+  @apply relative;
+}
+
+.notification-badge {
+  @apply absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold;
+}
+
+.icon {
+  @apply w-5 h-5 text-gray-300;
+}
+
+.profile-btn {
+  @apply flex items-center space-x-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 p-1 hover:scale-105 transition-transform;
+}
+
+.profile-icon {
+  @apply w-8 h-8 text-white;
+}
+
+.profile-text {
+  @apply text-white font-medium pr-3 text-sm;
+}
+
+/* ===== BASE CARD STYLES ===== */
+.dashboard-card {
+  @apply bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-5 lg:p-6 shadow-lg transition-all duration-300 hover:scale-[1.02];
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.card-title {
+  @apply text-lg lg:text-xl font-semibold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent;
+}
+
+.card-subtitle {
+  @apply text-gray-300 text-xs lg:text-sm mb-4;
+}
+
+/* ===== WELCOME CARD STYLES ===== */
+.welcome-card {
+  @apply border-emerald-500/30 col-span-1 lg:col-span-2 flex flex-col justify-between;
+}
+
+.welcome-content {
+  @apply mb-4;
+}
+
+.welcome-title {
+  @apply text-xl lg:text-2xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent;
+}
+
+.welcome-subtitle {
+  @apply text-gray-300 text-sm lg:text-base;
+}
+
+.quick-actions {
+  @apply flex flex-col sm:flex-row gap-3 lg:gap-4;
+}
+
+.quick-action-btn {
+  @apply flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-white text-sm transition-all duration-200 hover:scale-105;
+}
+
+.start-session {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-600;
+}
+
+.share-resource {
+  @apply bg-gradient-to-r from-blue-500 to-indigo-600;
+}
+
+.join-discussion {
+  @apply bg-gradient-to-r from-purple-500 to-violet-600;
+}
+
+.action-icon {
+  @apply w-4 h-4;
+}
+
+/* ===== MENTORSHIP SESSIONS STYLES ===== */
+.sessions-card {
+  @apply border-emerald-500/30;
+}
+
+.sessions-list {
+  @apply space-y-3 mb-4;
+}
+
+.session-item {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.session-info {
+  @apply flex-1;
+}
+
+.session-student {
+  @apply font-semibold text-white mb-1 text-sm;
+}
+
+.session-topic {
+  @apply text-xs text-emerald-400 mb-1;
+}
+
+.session-time {
+  @apply text-xs text-gray-400;
+}
+
+.session-status {
+  @apply px-2 py-1 rounded text-xs font-medium self-start sm:self-center;
+}
+
+.session-status.scheduled {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.session-status.confirmed {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.session-status.pending {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.manage-sessions-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== HELP REQUESTS STYLES ===== */
+.requests-card {
+  @apply border-orange-500/30;
+}
+
+.requests-list {
+  @apply space-y-3 mb-4;
+}
+
+.request-item {
+  @apply bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.request-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.request-student {
+  @apply font-medium text-orange-400 text-sm;
+}
+
+.priority-badge {
+  @apply px-2 py-1 rounded text-xs font-medium;
+}
+
+.priority-badge.high {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.priority-badge.medium {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.priority-badge.low {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.request-text {
+  @apply text-gray-200 mb-2 text-sm leading-relaxed;
+}
+
+.request-actions {
+  @apply flex items-center justify-between;
+}
+
+.respond-btn {
+  @apply flex items-center space-x-1 px-3 py-1 rounded bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-medium hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+.request-time {
+  @apply text-xs text-gray-400;
+}
+
+.view-all-requests-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== COMMUNITY FEED STYLES ===== */
+.community-card {
+  @apply border-purple-500/30;
+}
+
+.community-list {
+  @apply space-y-3 mb-4;
+}
+
+.community-item {
+  @apply bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.post-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.post-author {
+  @apply font-medium text-purple-400 text-sm;
+}
+
+.post-type {
+  @apply px-2 py-1 rounded text-xs font-medium;
+}
+
+.post-type.article {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.post-type.experience {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.post-type.discussion {
+  @apply bg-purple-500/20 text-purple-400;
+}
+
+.post-title {
+  @apply font-semibold text-white mb-2 text-sm leading-relaxed;
+}
+
+.post-engagement {
+  @apply flex items-center space-x-2 text-xs text-gray-400;
+}
+
+.post-time {
+  @apply ml-auto;
+}
+
+.join-community-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== IMPACT ANALYTICS STYLES ===== */
+.impact-card {
+  @apply border-teal-500/30;
+}
+
+.impact-stats {
+  @apply grid grid-cols-2 gap-3 mb-4;
+}
+
+.stat-item {
+  @apply flex items-center space-x-3 bg-white/5 rounded-lg p-3;
+}
+
+.stat-icon {
+  @apply w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0;
+}
+
+.stat-icon.sessions {
+  @apply bg-emerald-500/20 text-emerald-400;
+}
+
+.stat-icon.students {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.stat-icon.resources {
+  @apply bg-purple-500/20 text-purple-400;
+}
+
+.stat-icon.badges {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.stat-info {
+  @apply flex flex-col;
+}
+
+.stat-number {
+  @apply text-base lg:text-lg font-bold text-white;
+}
+
+.stat-label {
+  @apply text-xs text-gray-400;
+}
+
+.detailed-impact-btn {
+  @apply w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== GUIDANCE OPPORTUNITIES STYLES ===== */
+.opportunities-card {
+  @apply border-indigo-500/30;
+}
+
+.opportunities-list {
+  @apply space-y-3 mb-4;
+}
+
+.opportunity-item {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.opportunity-info {
+  @apply flex-1;
+}
+
+.opportunity-title {
+  @apply font-semibold text-white mb-1 text-sm;
+}
+
+.opportunity-date {
+  @apply text-xs text-indigo-400 mb-1;
+}
+
+.opportunity-participants {
+  @apply text-xs text-gray-400;
+}
+
+.join-opportunity-btn {
+  @apply flex items-center space-x-1 px-3 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium hover:shadow-md hover:scale-105 transition-all duration-200 self-start sm:self-center;
+}
+
+.view-opportunities-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== WELLNESS SUPPORT STYLES ===== */
+.wellness-support-card {
+  @apply border-pink-500/30;
+}
+
+.wellness-requests {
+  @apply space-y-3 mb-4;
+}
+
+.wellness-item {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-pink-500/10 rounded-lg p-3 border border-pink-500/20;
+}
+
+.wellness-info {
+  @apply flex-1;
+}
+
+.wellness-student {
+  @apply font-medium text-pink-400 text-sm mb-1;
+}
+
+.wellness-concern {
+  @apply text-sm text-gray-200;
+}
+
+.support-btn {
+  @apply flex items-center space-x-1 px-3 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-rose-600 text-white text-sm font-medium hover:shadow-md hover:scale-105 transition-all duration-200 self-start sm:self-center;
+}
+
+.wellness-center-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-pink-500 to-rose-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== BADGES & RECOGNITION STYLES ===== */
+.badges-card {
+  @apply border-yellow-500/30;
+}
+
+.badges-grid {
+  @apply grid grid-cols-2 gap-3 mb-4;
+}
+
+.badge-item {
+  @apply flex flex-col items-center space-y-2 bg-white/5 rounded-lg p-3 text-center transition-all duration-200;
+}
+
+.badge-item.earned {
+  @apply bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 hover:scale-105;
+}
+
+.badge-item.locked {
+  @apply bg-gray-500/10 border border-gray-500/20 opacity-60;
+}
+
+.badge-icon {
+  @apply w-6 h-6;
+}
+
+.badge-item.earned .badge-icon {
+  @apply text-yellow-400;
+}
+
+.badge-item.locked .badge-icon {
+  @apply text-gray-500;
+}
+
+.badge-name {
+  @apply text-xs font-medium;
+}
+
+.badge-item.earned .badge-name {
+  @apply text-yellow-300;
+}
+
+.badge-item.locked .badge-name {
+  @apply text-gray-500;
+}
+
+.view-achievements-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== NOTIFICATIONS STYLES ===== */
+.notifications-card {
+  @apply border-cyan-500/30;
+}
+
+.notifications-list {
+  @apply space-y-3 mb-4;
+}
+
+.notification-item {
+  @apply flex items-start space-x-3 bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.notification-icon {
+  @apply flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center;
+}
+
+.notification-icon.request {
+  @apply bg-emerald-500/20 text-emerald-400;
+}
+
+.notification-icon.reminder {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.notification-icon.engagement {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.notification-icon.achievement {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.notification-content {
+  @apply flex-1;
+}
+
+.notification-text {
+  @apply text-gray-200 text-sm mb-1;
+}
+
+.notification-time {
+  @apply text-xs text-gray-400;
+}
+
+.view-all-notifications-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== TABLET BREAKPOINT (md: 768px) ===== */
+@media (min-width: 768px) {
+  .others-dashboard-content {
+    @apply gap-6 p-6;
+  }
+
+  .dashboard-card {
+    @apply p-6;
+  }
+
+  .card-title {
+    @apply text-xl;
+  }
+
+  .card-subtitle {
+    @apply text-sm;
+  }
+
+  .welcome-title {
+    @apply text-2xl;
+  }
+
+  .welcome-subtitle {
+    @apply text-base;
+  }
+
+  .quick-actions {
+    @apply flex-row;
+  }
+
+  .quick-action-btn {
+    @apply text-base;
+  }
+
+  .search-wrapper {
+    @apply max-w-lg;
+  }
+
+  .profile-text {
+    @apply block text-base;
+  }
+
+  .topbar-right {
+    @apply space-x-4;
+  }
+
+  .session-item,
+  .opportunity-item,
+  .wellness-item {
+    @apply flex-row items-center;
+  }
+
+  .session-status,
+  .join-opportunity-btn,
+  .support-btn {
+    @apply self-center;
+  }
+
+  .impact-stats {
+    @apply grid-cols-2;
+  }
+
+  .badges-grid {
+    @apply grid-cols-2;
+  }
+}
+
+/* ===== DESKTOP BREAKPOINT (lg: 1024px) ===== */
+@media (min-width: 1024px) {
+  .others-dashboard-wrapper {
+    @apply pl-64;
+  }
+
+  .others-sidebar {
+    @apply translate-x-0 fixed left-0;
+  }
+
+  .others-dashboard-main {
+    @apply ml-0;
+  }
+
+  .mobile-menu-toggle {
+    @apply hidden;
+  }
+
+  .sidebar-overlay {
+    @apply hidden;
+  }
+
+  .others-dashboard-content {
+    @apply grid-cols-2;
+  }
+
+  .welcome-card {
+    @apply col-span-2;
+  }
+
+  .topbar-left {
+    @apply ml-0;
+  }
+}
+
+/* ===== EXTRA LARGE DESKTOP (xl: 1280px) ===== */
+@media (min-width: 1280px) {
+  .others-dashboard-content {
+    @apply gap-8 p-8;
+  }
+
+  .search-wrapper {
+    @apply max-w-xl;
+  }
+}
+
+/* ===== MOBILE SPECIFIC (max-width: 640px) ===== */
+@media (max-width: 640px) {
+  .others-topbar {
+    @apply px-3 h-14;
+  }
+
+  .topbar-left {
+    @apply ml-12;
+  }
+
+  .search-wrapper {
+    @apply max-w-xs;
+  }
+
+  .search-input {
+    @apply text-xs py-1.5 pl-8;
+  }
+
+  .search-icon {
+    @apply w-3.5 h-3.5;
+  }
+
+  .profile-text {
+    @apply hidden;
+  }
+
+  .profile-btn {
+    @apply p-0.5;
+  }
+
+  .profile-icon {
+    @apply w-7 h-7;
+  }
+
+  .icon-btn {
+    @apply p-1.5;
+  }
+
+  .icon {
+    @apply w-4 h-4;
+  }
+
+  .others-dashboard-content {
+    @apply gap-4 p-3;
+  }
+
+  .dashboard-card {
+    @apply p-4;
+  }
+
+  .card-title {
+    @apply text-base;
+  }
+
+  .welcome-title {
+    @apply text-lg;
+  }
+
+  .welcome-subtitle {
+    @apply text-sm;
+  }
+
+  .nav-item {
+    @apply py-3;
+  }
+
+  .sidebar-logo {
+    @apply text-xl;
+  }
+
+  .impact-stats {
+    @apply grid-cols-1;
+  }
+
+  .badges-grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.welcome-card:hover {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+.sessions-card:hover {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+.requests-card:hover {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
+}
+
+.community-card:hover {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.impact-card:hover {
+  box-shadow: 0 0 30px rgba(20, 184, 166, 0.2);
+}
+
+.opportunities-card:hover {
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+}
+
+.wellness-support-card:hover {
+  box-shadow: 0 0 30px rgba(236, 72, 153, 0.2);
+}
+
+.badges-card:hover {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+}
+
+.notifications-card:hover {
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+}
+
+/* ===== FOCUS STYLES ===== */
+.quick-action-btn:focus,
+.manage-sessions-btn:focus,
+.view-all-requests-btn:focus,
+.join-community-btn:focus,
+.detailed-impact-btn:focus,
+.view-opportunities-btn:focus,
+.wellness-center-btn:focus,
+.view-achievements-btn:focus,
+.view-all-notifications-btn:focus,
+.respond-btn:focus,
+.support-btn:focus,
+.join-opportunity-btn:focus,
+.search-input:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-offset-transparent;
+}
+
+.start-session:focus {
+  @apply ring-emerald-500;
+}
+
+.share-resource:focus {
+  @apply ring-blue-500;
+}
+
+.join-discussion:focus {
+  @apply ring-purple-500;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.notifications-list::-webkit-scrollbar,
+.sessions-list::-webkit-scrollbar,
+.requests-list::-webkit-scrollbar,
+.community-list::-webkit-scrollbar,
+.opportunities-list::-webkit-scrollbar,
+.wellness-requests::-webkit-scrollbar,
+.others-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notifications-list::-webkit-scrollbar-track,
+.sessions-list::-webkit-scrollbar-track,
+.requests-list::-webkit-scrollbar-track,
+.community-list::-webkit-scrollbar-track,
+.opportunities-list::-webkit-scrollbar-track,
+.wellness-requests::-webkit-scrollbar-track,
+.others-sidebar::-webkit-scrollbar-track {
+  @apply bg-white/5;
+}
+
+.notifications-list::-webkit-scrollbar-thumb,
+.sessions-list::-webkit-scrollbar-thumb,
+.requests-list::-webkit-scrollbar-thumb,
+.community-list::-webkit-scrollbar-thumb,
+.opportunities-list::-webkit-scrollbar-thumb,
+.wellness-requests::-webkit-scrollbar-thumb,
+.others-sidebar::-webkit-scrollbar-thumb {
+  @apply bg-white/20 rounded-full;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-card,
+  .others-sidebar {
+    @apply animate-none transition-none;
+  }
+}
+
+/* ===== UTILITIES ===== */
+.bg-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.text-truncate {
+  @apply truncate;
+}
+
+/* ===== LOADING STATES ===== */
+.dashboard-card.loading {
+  @apply animate-pulse;
+}
+
+.dashboard-card.loading .card-title,
+.dashboard-card.loading .card-subtitle {
+  @apply bg-gray-400 text-transparent bg-clip-text;
+}

@@ -1,0 +1,146 @@
+/* Teacher.css */
+
+.teacher-wrapper {
+  @apply min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 
+         text-white flex items-center justify-center p-4 overflow-hidden relative;
+}
+
+/* Background */
+.teacher-background {
+  @apply absolute inset-0 overflow-hidden;
+}
+
+.bg-blob {
+  @apply absolute rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse;
+}
+
+.bg-blob-1 {
+  @apply top-1/4 left-1/4 w-64 h-64 bg-blue-500;
+}
+
+.bg-blob-2 {
+  @apply top-3/4 right-1/4 w-64 h-64 bg-purple-500;
+  animation-delay: 2s;
+}
+
+.bg-blob-3 {
+  @apply bottom-1/4 left-1/2 w-64 h-64 bg-pink-500;
+  animation-delay: 4s;
+}
+
+/* Back Button */
+.back-button {
+  @apply absolute top-6 left-6 z-20 flex items-center space-x-2 px-4 py-2 
+         bg-black/20 backdrop-blur-md rounded-full border border-white/10 
+         hover:bg-white/10 transition-all duration-200 text-sm font-medium;
+}
+
+.back-icon {
+  @apply w-4 h-4;
+}
+
+/* Container */
+.teacher-container {
+  @apply relative z-10 w-full max-w-lg mx-auto;
+}
+
+.teacher-card {
+  @apply bg-black/20 backdrop-blur-xl border border-white/10 rounded-3xl p-8 
+         shadow-2xl;
+}
+
+/* Header */
+.teacher-header {
+  @apply text-center mb-8;
+}
+
+.teacher-logo {
+  @apply flex items-center justify-center space-x-3 mb-6;
+}
+
+.logo-icon {
+  @apply w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl 
+         flex items-center justify-center;
+}
+
+.logo-brain {
+  @apply w-7 h-7 text-white;
+}
+
+.logo-text {
+  @apply text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 
+         bg-clip-text text-transparent;
+}
+
+.teacher-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.teacher-subtitle {
+  @apply text-gray-300 text-sm;
+}
+
+/* Form */
+.teacher-form {
+  @apply space-y-6;
+}
+
+.form-group {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-200;
+}
+
+.input-wrapper {
+  @apply relative;
+}
+
+.input-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400;
+}
+
+.form-input {
+  @apply w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+         text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+         focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+.form-input:focus {
+  @apply bg-white/10;
+}
+
+.teacher-submit-btn {
+  @apply w-full p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl 
+         text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .teacher-card {
+    @apply p-6;
+  }
+  .teacher-title {
+    @apply text-2xl;
+  }
+  .back-button {
+    @apply top-4 left-4;
+  }
+}
+
+/* Animation */
+.teacher-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

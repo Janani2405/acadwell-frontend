@@ -1,0 +1,772 @@
+/* TeacherDashboard.css - Fully Responsive with Mobile Sidebar */
+
+/* ===== BASE STYLES ===== */
+.teacher-dashboard-wrapper {
+  @apply flex min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative;
+}
+
+.teacher-dashboard-main {
+  @apply flex flex-col flex-1 w-full;
+}
+
+.teacher-dashboard-content {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6 p-6;
+}
+
+/* ===== MOBILE MENU TOGGLE (Hidden on Desktop) ===== */
+.mobile-menu-toggle {
+  @apply lg:hidden fixed top-4 left-4 z-[60] p-2 bg-black/50 backdrop-blur-md rounded-lg border border-white/20 cursor-pointer;
+}
+
+.menu-icon {
+  @apply w-6 h-6 text-white;
+}
+
+/* ===== SIDEBAR OVERLAY (Mobile/Tablet) ===== */
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300;
+}
+
+
+.sidebar-overlay.visible {
+  @apply opacity-100 pointer-events-auto;
+}
+
+/* ===== SIDEBAR STYLES ===== */
+.teacher-sidebar {
+  @apply fixed lg:static top-0 left-0 h-screen w-64 bg-black/90 backdrop-blur-xl border-r border-white/10 p-6 z-50 transition-transform duration-300 overflow-y-auto;
+}
+
+/* Mobile: Sidebar slides in from left */
+.teacher-sidebar.mobile-hidden {
+  @apply -translate-x-full lg:translate-x-0;
+}
+
+.teacher-sidebar.mobile-visible {
+  @apply translate-x-0;
+}
+
+.sidebar-header {
+  @apply mb-10;
+}
+
+.sidebar-logo {
+  @apply text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;
+}
+
+.teacher-badge {
+  @apply inline-block px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white mt-2;
+}
+
+.sidebar-nav ul {
+  @apply space-y-3;
+}
+
+.nav-item {
+  @apply flex items-center space-x-3 text-gray-300 hover:text-white cursor-pointer transition-colors px-3 py-2 rounded-lg hover:bg-white/10;
+}
+
+.nav-item.active {
+  @apply bg-white/10 text-white;
+}
+
+.nav-icon {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+/* ===== TOPBAR STYLES ===== */
+.teacher-topbar {
+  @apply h-16 flex items-center justify-between px-4 lg:px-6 bg-black/30 backdrop-blur-lg border-b border-white/10;
+}
+
+.topbar-left {
+  @apply flex items-center flex-1;
+}
+
+.search-wrapper {
+  @apply relative w-full max-w-md ml-0 lg:ml-0;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400;
+}
+
+.search-input {
+  @apply w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.topbar-right {
+  @apply flex items-center space-x-2 lg:space-x-4;
+}
+
+.icon-btn {
+  @apply relative p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors;
+}
+
+.notification-btn {
+  @apply relative;
+}
+
+.notification-badge {
+  @apply absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold;
+}
+
+.icon {
+  @apply w-5 h-5 text-gray-300;
+}
+
+.profile-btn {
+  @apply flex items-center space-x-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-1 hover:scale-105 transition-transform;
+}
+
+.profile-icon {
+  @apply w-8 h-8 text-white;
+}
+
+.profile-text {
+  @apply text-white font-medium pr-3 text-sm;
+}
+
+/* ===== BASE CARD STYLES ===== */
+.dashboard-card {
+  @apply bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-5 lg:p-6 shadow-lg transition-all duration-300 hover:scale-[1.02];
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.card-title {
+  @apply text-lg lg:text-xl font-semibold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;
+}
+
+.card-subtitle {
+  @apply text-gray-300 text-xs lg:text-sm mb-4;
+}
+
+/* ===== WELCOME CARD STYLES ===== */
+.welcome-card {
+  @apply border-blue-500/30 col-span-1 lg:col-span-2 flex flex-col justify-between;
+}
+
+.welcome-content {
+  @apply mb-4;
+}
+
+.welcome-title {
+  @apply text-xl lg:text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;
+}
+
+.welcome-subtitle {
+  @apply text-gray-300 text-sm lg:text-base;
+}
+
+.quick-actions {
+  @apply flex flex-col sm:flex-row gap-3 lg:gap-4;
+}
+
+.quick-action-btn {
+  @apply flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-white text-sm transition-all duration-200 hover:scale-105;
+}
+
+.create-class {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600;
+}
+
+.post-assignment {
+  @apply bg-gradient-to-r from-green-500 to-green-600;
+}
+
+.check-queries {
+  @apply bg-gradient-to-r from-orange-500 to-orange-600;
+}
+
+.action-icon {
+  @apply w-4 h-4;
+}
+
+/* ===== CLASSES CARD STYLES ===== */
+.classes-card {
+  @apply border-blue-500/30;
+}
+
+.classes-list {
+  @apply space-y-3 mb-4;
+}
+
+.class-item {
+  @apply flex items-center justify-between bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.class-item.class-blue {
+  @apply border-l-4 border-blue-500;
+}
+
+.class-item.class-green {
+  @apply border-l-4 border-green-500;
+}
+
+.class-item.class-purple {
+  @apply border-l-4 border-purple-500;
+}
+
+.class-info {
+  @apply flex-1;
+}
+
+.class-name {
+  @apply font-semibold text-white mb-1 text-sm;
+}
+
+.class-students {
+  @apply text-xs text-gray-400;
+}
+
+.class-action-btn {
+  @apply p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0;
+}
+
+.view-all-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== ASSIGNMENTS CARD STYLES ===== */
+.assignments-card {
+  @apply border-green-500/30;
+}
+
+.assignments-list {
+  @apply space-y-3 mb-4;
+}
+
+.assignment-item {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white/5 rounded-lg p-3;
+}
+
+.assignment-info {
+  @apply flex-1;
+}
+
+.assignment-title {
+  @apply font-semibold text-white mb-1 text-sm;
+}
+
+.assignment-meta {
+  @apply text-xs text-gray-400;
+}
+
+.assignment-progress {
+  @apply flex items-center self-start sm:self-center;
+}
+
+.progress-circle {
+  @apply w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center flex-shrink-0;
+}
+
+.progress-text {
+  @apply text-xs font-bold text-white;
+}
+
+.manage-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== QUERIES CARD STYLES ===== */
+.queries-card {
+  @apply border-orange-500/30;
+}
+
+.queries-list {
+  @apply space-y-3 mb-4;
+}
+
+.query-item {
+  @apply bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.query-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.query-student {
+  @apply font-medium text-orange-400 text-sm;
+}
+
+.query-class {
+  @apply text-xs bg-orange-500/20 text-orange-300 px-2 py-1 rounded;
+}
+
+.query-text {
+  @apply text-gray-200 mb-2 text-sm leading-relaxed;
+}
+
+.query-actions {
+  @apply flex items-center justify-between;
+}
+
+.reply-btn {
+  @apply flex items-center space-x-1 px-3 py-1 rounded bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-medium hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+.status-indicator {
+  @apply flex items-center;
+}
+
+.status-indicator.replied {
+  @apply text-green-400;
+}
+
+.status-indicator.pending {
+  @apply text-yellow-400;
+}
+
+.view-all-queries-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== ANALYTICS CARD STYLES ===== */
+.analytics-card {
+  @apply border-purple-500/30;
+}
+
+.analytics-content {
+  @apply space-y-3 mb-4;
+}
+
+.participation-item {
+  @apply space-y-2;
+}
+
+.participation-info {
+  @apply flex justify-between items-center;
+}
+
+.participation-rate {
+  @apply font-semibold text-purple-400 text-sm;
+}
+
+.participation-bar {
+  @apply w-full h-2 bg-white/10 rounded-full overflow-hidden;
+}
+
+.participation-fill {
+  @apply h-full bg-gradient-to-r from-purple-400 to-indigo-500 transition-all duration-300;
+}
+
+.detailed-analytics-btn {
+  @apply w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== AT-RISK STUDENTS STYLES ===== */
+.at-risk-card {
+  @apply border-red-500/30;
+}
+
+.at-risk-list {
+  @apply space-y-3 mb-4;
+}
+
+.at-risk-item {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-red-500/10 rounded-lg p-3 border border-red-500/20;
+}
+
+.student-info {
+  @apply flex flex-col;
+}
+
+.student-name {
+  @apply font-medium text-white text-sm;
+}
+
+.student-issue {
+  @apply text-xs text-red-300;
+}
+
+.severity-badge {
+  @apply flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium self-start sm:self-center;
+}
+
+.severity-badge.high {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.severity-badge.medium {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.severity-badge.low {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.view-all-risk-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== NOTIFICATIONS STYLES ===== */
+.notifications-card {
+  @apply border-purple-500/30;
+}
+
+.notifications-list {
+  @apply space-y-3 mb-4;
+}
+
+.notification-item {
+  @apply flex items-start space-x-3 bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors;
+}
+
+.notification-icon {
+  @apply w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5;
+}
+
+.notification-content {
+  @apply flex-1;
+}
+
+.notification-text {
+  @apply text-gray-200 text-sm mb-1;
+}
+
+.notification-time {
+  @apply text-xs text-gray-400;
+}
+
+.view-all-notifications-btn {
+  @apply w-full py-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 font-medium text-sm text-white hover:shadow-md hover:scale-105 transition-all duration-200;
+}
+
+/* ===== COURSE RESOURCES STYLES ===== */
+.resources-card {
+  @apply border-emerald-500/30;
+}
+
+.resources-actions {
+  @apply flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mb-4;
+}
+
+.resource-action {
+  @apply flex items-center justify-center space-x-2 px-3 py-2 rounded-lg font-medium text-white transition-all duration-200 hover:scale-105 text-sm;
+}
+
+.upload-notes {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-600;
+}
+
+.manage-resources {
+  @apply bg-gradient-to-r from-teal-500 to-cyan-600;
+}
+
+.recent-uploads {
+  @apply space-y-2;
+}
+
+.recent-title {
+  @apply text-sm font-semibold text-gray-300 mb-3;
+}
+
+.uploads-list {
+  @apply space-y-2;
+}
+
+.upload-item {
+  @apply flex items-center bg-white/5 rounded p-2 hover:bg-white/10 transition-colors;
+}
+
+.upload-icon {
+  @apply w-4 h-4 text-emerald-400 mr-2 flex-shrink-0;
+}
+
+.upload-name {
+  @apply text-sm text-gray-200 truncate;
+}
+
+/* ===== TABLET BREAKPOINT (md: 768px) ===== */
+@media (min-width: 768px) {
+  .teacher-dashboard-content {
+    @apply gap-6 p-6;
+  }
+
+  .dashboard-card {
+    @apply p-6;
+  }
+
+  .card-title {
+    @apply text-xl;
+  }
+
+  .card-subtitle {
+    @apply text-sm;
+  }
+
+  .welcome-title {
+    @apply text-2xl;
+  }
+
+  .welcome-subtitle {
+    @apply text-base;
+  }
+
+  .quick-actions {
+    @apply flex-row;
+  }
+
+  .quick-action-btn {
+    @apply text-base;
+  }
+
+  .search-wrapper {
+    @apply max-w-lg;
+  }
+
+  .profile-text {
+    @apply block text-base;
+  }
+
+  .topbar-right {
+    @apply space-x-4;
+  }
+
+  .assignment-item,
+  .at-risk-item {
+    @apply flex-row items-center;
+  }
+
+  .assignment-progress,
+  .severity-badge {
+    @apply self-center;
+  }
+
+  .resources-actions {
+    @apply flex-row space-y-0 space-x-3;
+  }
+}
+
+/* ===== DESKTOP BREAKPOINT (lg: 1024px) ===== */
+@media (min-width: 1024px) {
+  .teacher-dashboard-wrapper {
+    @apply pl-64;
+  }
+
+  .teacher-sidebar {
+    @apply translate-x-0 fixed left-0;
+  }
+
+  .teacher-dashboard-main {
+    @apply ml-0;
+  }
+
+  .mobile-menu-toggle {
+    @apply hidden;
+  }
+
+  .sidebar-overlay {
+    @apply hidden;
+  }
+
+  .teacher-dashboard-content {
+    @apply grid-cols-2;
+  }
+
+  .welcome-card {
+    @apply col-span-2;
+  }
+
+  .topbar-left {
+    @apply ml-0;
+  }
+}
+
+/* ===== EXTRA LARGE DESKTOP (xl: 1280px) ===== */
+@media (min-width: 1280px) {
+  .teacher-dashboard-content {
+    @apply gap-8 p-8;
+  }
+
+  .search-wrapper {
+    @apply max-w-xl;
+  }
+}
+
+/* ===== MOBILE SPECIFIC (max-width: 640px) ===== */
+@media (max-width: 640px) {
+  .teacher-topbar {
+    @apply px-3 h-14;
+  }
+
+  .topbar-left {
+    @apply ml-12;
+  }
+
+  .search-wrapper {
+    @apply max-w-xs;
+  }
+
+  .search-input {
+    @apply text-xs py-1.5 pl-8;
+  }
+
+  .search-icon {
+    @apply w-3.5 h-3.5;
+  }
+
+  .profile-text {
+    @apply hidden;
+  }
+
+  .profile-btn {
+    @apply p-0.5;
+  }
+
+  .profile-icon {
+    @apply w-7 h-7;
+  }
+
+  .icon-btn {
+    @apply p-1.5;
+  }
+
+  .icon {
+    @apply w-4 h-4;
+  }
+
+  .teacher-dashboard-content {
+    @apply gap-4 p-3;
+  }
+
+  .dashboard-card {
+    @apply p-4;
+  }
+
+  .card-title {
+    @apply text-base;
+  }
+
+  .welcome-title {
+    @apply text-lg;
+  }
+
+  .welcome-subtitle {
+    @apply text-sm;
+  }
+
+  .nav-item {
+    @apply py-3;
+  }
+
+  .sidebar-logo {
+    @apply text-xl;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.welcome-card:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.classes-card:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.assignments-card:hover {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
+}
+
+.queries-card:hover {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
+}
+
+.analytics-card:hover {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.at-risk-card:hover {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+}
+
+.notifications-card:hover {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.resources-card:hover {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+/* ===== FOCUS STYLES ===== */
+.quick-action-btn:focus,
+.view-all-btn:focus,
+.manage-btn:focus,
+.reply-btn:focus,
+.detailed-analytics-btn:focus,
+.view-all-risk-btn:focus,
+.view-all-notifications-btn:focus,
+.view-all-queries-btn:focus,
+.resource-action:focus,
+.search-input:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-offset-transparent;
+}
+
+.create-class:focus {
+  @apply ring-blue-500;
+}
+
+.post-assignment:focus {
+  @apply ring-green-500;
+}
+
+.check-queries:focus {
+  @apply ring-orange-500;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.notifications-list::-webkit-scrollbar,
+.queries-list::-webkit-scrollbar,
+.at-risk-list::-webkit-scrollbar,
+.assignments-list::-webkit-scrollbar,
+.uploads-list::-webkit-scrollbar,
+.teacher-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notifications-list::-webkit-scrollbar-track,
+.queries-list::-webkit-scrollbar-track,
+.at-risk-list::-webkit-scrollbar-track,
+.assignments-list::-webkit-scrollbar-track,
+.uploads-list::-webkit-scrollbar-track,
+.teacher-sidebar::-webkit-scrollbar-track {
+  @apply bg-white/5;
+}
+
+.notifications-list::-webkit-scrollbar-thumb,
+.queries-list::-webkit-scrollbar-thumb,
+.at-risk-list::-webkit-scrollbar-thumb,
+.assignments-list::-webkit-scrollbar-thumb,
+.uploads-list::-webkit-scrollbar-thumb,
+.teacher-sidebar::-webkit-scrollbar-thumb {
+  @apply bg-white/20 rounded-full;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-card,
+  .teacher-sidebar {
+    @apply animate-none transition-none;
+  }
+}
+
+/* ===== UTILITIES ===== */
+.bg-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.text-truncate {
+  @apply truncate;
+}
+
+/* ===== LOADING STATES ===== */
+.dashboard-card.loading {
+  @apply animate-pulse;
+}
+
+.dashboard-card.loading .card-title,
+.dashboard-card.loading .card-subtitle {
+  @apply bg-gray-400 text-transparent bg-clip-text;
+}

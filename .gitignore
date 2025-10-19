@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# Misc
+.DS_Store
+*.pem
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.iml

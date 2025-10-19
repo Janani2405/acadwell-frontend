@@ -1,0 +1,436 @@
+/* CommunityFeed.css - Professional Community Q&A Styling */
+
+/* ===== MAIN CONTAINER ===== */
+.community-feed {
+  @apply max-w-6xl mx-auto px-6 py-8;
+}
+
+/* ===== HEADER SECTION ===== */
+.feed-header {
+  @apply mb-8;
+}
+
+.header-content {
+  @apply flex justify-between items-center mb-6;
+}
+
+.header-text {
+  @apply flex-1;
+}
+
+.page-title {
+  @apply text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2;
+}
+
+.page-subtitle {
+  @apply text-gray-300 text-lg;
+}
+
+.ask-question-btn {
+  @apply flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold text-white hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-blue-500/25;
+}
+
+/* ===== SEARCH AND FILTER BAR ===== */
+.search-filter-bar {
+  @apply flex flex-col sm:flex-row gap-4 mb-8 bg-black/30 backdrop-blur-xl rounded-2xl p-4 border border-white/10;
+}
+
+.search-container {
+  @apply relative flex-1;
+}
+
+.search-icon {
+  @apply absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400;
+}
+
+.search-input {
+  @apply w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+}
+
+.filter-container {
+  @apply relative flex items-center space-x-3;
+}
+
+.filter-icon {
+  @apply w-5 h-5 text-gray-400;
+}
+
+.filter-select {
+  @apply px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[160px];
+}
+
+.filter-select option {
+  @apply bg-gray-800 text-white;
+}
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+  @apply flex items-center space-x-2 text-xl font-semibold text-white mb-4;
+}
+
+/* ===== FEATURED SECTION ===== */
+.featured-section {
+  @apply mb-8;
+}
+
+.featured-posts {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+}
+
+.featured-post-card {
+  @apply bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== POSTS SECTION ===== */
+.posts-section {
+  @apply mb-8;
+}
+
+.posts-list {
+  @apply space-y-4;
+}
+
+.post-card {
+  @apply bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:bg-black/40 hover:border-white/20;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== POST STRUCTURE ===== */
+.post-header {
+  @apply flex justify-between items-center mb-3;
+}
+
+.author-info {
+  @apply flex items-center space-x-3;
+}
+
+.author-name {
+  @apply font-semibold text-white;
+}
+
+.anonymous-badge {
+  @apply px-3 py-1 text-xs font-medium bg-gray-600/30 text-gray-300 rounded-full;
+}
+
+.user-badge {
+  @apply px-2 py-1 text-xs font-medium rounded-full;
+}
+
+.post-time {
+  @apply text-sm text-gray-400;
+}
+
+.post-title {
+  @apply text-lg font-semibold text-white mb-2 line-clamp-2 hover:text-blue-300 transition-colors;
+}
+
+.post-description {
+  @apply text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed;
+}
+
+/* ===== TAGS ===== */
+.post-tags {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+.tag-badge {
+  @apply px-2 py-1 text-xs bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-colors;
+}
+
+/* ===== POST STATS AND FOOTER ===== */
+.post-stats {
+  @apply flex items-center space-x-4;
+}
+
+.stat-item {
+  @apply flex items-center space-x-1 text-gray-400;
+}
+
+.stat-item svg {
+  @apply w-4 h-4;
+}
+
+.stat-item span {
+  @apply text-sm;
+}
+
+.post-footer {
+  @apply flex justify-between items-center;
+}
+
+.status-indicator {
+  @apply flex items-center space-x-2;
+}
+
+.status-text {
+  @apply text-sm font-medium;
+}
+
+/* ===== FLOATING ACTION BUTTON ===== */
+.floating-ask-btn {
+  @apply fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 z-50 md:hidden;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .community-feed {
+    @apply px-4 py-6;
+  }
+
+  .header-content {
+    @apply flex-col items-start space-y-4;
+  }
+
+  .ask-question-btn {
+    @apply self-stretch justify-center;
+  }
+
+  .search-filter-bar {
+    @apply p-3;
+  }
+
+  .featured-posts {
+    @apply grid-cols-1;
+  }
+
+  .page-title {
+    @apply text-2xl;
+  }
+
+  .post-card,
+  .featured-post-card {
+    @apply p-4;
+  }
+
+  .post-header {
+    @apply flex-col items-start space-y-2;
+  }
+
+  .author-info {
+    @apply flex-wrap;
+  }
+
+  .post-footer {
+    @apply flex-col space-y-3 items-start;
+  }
+
+  .post-stats {
+    @apply justify-between w-full;
+  }
+}
+
+@media (max-width: 640px) {
+  .search-filter-bar {
+    @apply p-2;
+  }
+
+  .search-input {
+    @apply text-sm;
+  }
+
+  .filter-select {
+    @apply text-sm min-w-[140px];
+  }
+
+  .post-title {
+    @apply text-base;
+  }
+
+  .post-tags {
+    @apply gap-1;
+  }
+
+  .tag-badge {
+    @apply px-2 py-0.5 text-xs;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.featured-post-card:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+}
+
+.post-card:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* ===== FOCUS STYLES ===== */
+.search-input:focus,
+.filter-select:focus,
+.ask-question-btn:focus,
+.floating-ask-btn:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-offset-transparent;
+}
+
+.search-input:focus {
+  @apply ring-blue-500;
+}
+
+.filter-select:focus {
+  @apply ring-purple-500;
+}
+
+.ask-question-btn:focus,
+.floating-ask-btn:focus {
+  @apply ring-blue-400;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-card,
+.featured-post-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.post-card:nth-child(even) {
+  animation-delay: 0.1s;
+}
+
+.featured-post-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* ===== STATUS INDICATORS ===== */
+.status-indicator svg.text-green-400 {
+  @apply drop-shadow-sm;
+}
+
+.status-indicator svg.text-blue-400 {
+  @apply drop-shadow-sm;
+}
+
+.status-indicator svg.text-yellow-400 {
+  @apply drop-shadow-sm;
+}
+
+/* ===== LOADING STATES ===== */
+.post-card.loading {
+  @apply animate-pulse;
+}
+
+.post-card.loading .post-title,
+.post-card.loading .post-description {
+  @apply bg-gray-600 text-transparent bg-clip-text rounded;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.posts-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.posts-list::-webkit-scrollbar-track {
+  @apply bg-white/5 rounded-full;
+}
+
+.posts-list::-webkit-scrollbar-thumb {
+  @apply bg-white/20 rounded-full hover:bg-white/30;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ===== USER TYPE SPECIFIC COLORS ===== */
+.user-badge.bg-blue-500\/20 {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.user-badge.bg-green-500\/20 {
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.user-badge.bg-purple-500\/20 {
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .post-card,
+  .featured-post-card,
+  .ask-question-btn,
+  .floating-ask-btn {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .post-card,
+  .featured-post-card {
+    @apply border-white/50;
+  }
+  
+  .tag-badge {
+    @apply bg-white/20 border border-white/30;
+  }
+  
+  .user-badge {
+    @apply border-2;
+  }
+}
+
+/* ===== BACK TO DASHBOARD BUTTON ===== */
+.left-header-actions {
+  @apply flex items-center space-x-4;
+}
+
+.back-btn {
+  @apply inline-flex items-center space-x-2 px-3 py-2 rounded-md bg-white/5 text-white text-sm hover:bg-white/10 transition-colors;
+  text-decoration: none;
+}
+
+.back-btn .back-icon {
+  @apply w-4 h-4 text-white;
+}
+
+/* hide the text on very small screens and keep icon */
+.back-btn .back-text {
+  @apply hidden sm:inline-block;
+}
+
+/* spacing tweak so the title doesn't get jammed */
+.header-content .header-text {
+  @apply ml-0; /* default, already ok — override if you want extra gap */
+}
+
+/* optional: give the title a little left padding when back button present */
+@media (min-width: 640px) {
+  .header-content .header-text {
+    @apply ml-2;
+  }
+}
+
+/* mobile behavior: stack back + title if screen is narrow */
+@media (max-width: 640px) {
+  .left-header-actions {
+    @apply flex-col items-start space-y-2;
+  }
+  .ask-question-btn {
+    @apply self-stretch justify-center;
+  }
+}

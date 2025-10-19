@@ -1,0 +1,542 @@
+/* AskQuestion.css - Create Question Form Styling */
+
+/* ===== MAIN CONTAINER ===== */
+.ask-question-page {
+  @apply max-w-4xl mx-auto px-6 py-8;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+  @apply mb-8;
+}
+
+.back-btn {
+  @apply flex items-center space-x-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all duration-200 mb-6;
+}
+
+.header-content {
+  @apply flex justify-between items-center;
+}
+
+.header-text {
+  @apply flex-1;
+}
+
+.page-title {
+  @apply text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2;
+}
+
+.page-subtitle {
+  @apply text-gray-300 text-lg;
+}
+
+.header-actions {
+  @apply flex items-center space-x-4;
+}
+
+.preview-btn {
+  @apply flex items-center space-x-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all duration-200;
+}
+
+/* ===== FORM CONTAINER ===== */
+.form-container {
+  @apply bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== TIPS SECTION ===== */
+.tips-section {
+  @apply bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-8;
+}
+
+.tips-header {
+  @apply flex items-center space-x-2 mb-3;
+}
+
+.tips-title {
+  @apply font-semibold text-yellow-400;
+}
+
+.tips-list {
+  @apply space-y-1 text-gray-300 text-sm;
+}
+
+.tips-list li {
+  @apply flex items-start space-x-2;
+}
+
+.tips-list li:before {
+  content: "•";
+  @apply text-yellow-400 font-bold;
+}
+
+/* ===== FORM SECTIONS ===== */
+.form-section {
+  @apply mb-8;
+}
+
+.form-label {
+  @apply flex items-center justify-between text-white font-medium mb-3;
+}
+
+.char-count {
+  @apply text-sm text-gray-400 font-normal;
+}
+
+.error-text {
+  @apply text-red-400 text-sm font-normal;
+}
+
+/* ===== CATEGORY SELECTION ===== */
+.category-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+.category-card {
+  @apply flex flex-col items-center space-y-2 p-4 border rounded-xl transition-all duration-200 hover:scale-105 cursor-pointer;
+}
+
+.category-card.selected {
+  @apply scale-105 shadow-lg;
+}
+
+.category-name {
+  @apply text-sm font-medium;
+}
+
+/* ===== INPUT FIELDS ===== */
+.title-input {
+  @apply w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+}
+
+.title-input.error {
+  @apply border-red-500/50 focus:ring-red-500;
+}
+
+.description-input {
+  @apply w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[200px] transition-all;
+}
+
+.description-input.error {
+  @apply border-red-500/50 focus:ring-red-500;
+}
+
+/* ===== TAGS SECTION ===== */
+.selected-tags {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+.selected-tag {
+  @apply flex items-center space-x-2 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg text-sm;
+}
+
+.selected-tag button {
+  @apply hover:bg-blue-500/30 rounded transition-colors;
+}
+
+.popular-tags {
+  @apply mt-4;
+}
+
+.tags-subtitle {
+  @apply text-sm text-gray-400 mb-2 block;
+}
+
+.tags-grid {
+  @apply flex flex-wrap gap-2;
+}
+
+.tag-suggestion {
+  @apply flex items-center space-x-1 px-3 py-2 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded-lg text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* ===== PRIVACY SECTION ===== */
+.privacy-section {
+  @apply bg-white/5 rounded-xl p-4;
+}
+
+.privacy-header {
+  @apply mb-4;
+}
+
+.privacy-option {
+  @apply flex items-start space-x-3;
+}
+
+.privacy-checkbox {
+  @apply w-5 h-5 bg-white/10 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-500 mt-1;
+}
+
+.privacy-label {
+  @apply flex-1 cursor-pointer;
+}
+
+.privacy-content {
+  @apply flex flex-col;
+}
+
+.privacy-title {
+  @apply text-white font-medium;
+}
+
+.privacy-description {
+  @apply text-gray-400 text-sm;
+}
+
+/* ===== SUBMIT SECTION ===== */
+.submit-section {
+  @apply flex items-center justify-center space-x-4 pt-8 border-t border-white/10;
+}
+
+.submit-btn {
+  @apply flex items-center space-x-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold text-white hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+}
+
+.cancel-btn {
+  @apply px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all duration-200;
+}
+
+.spinner {
+  @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+/* ===== PREVIEW SECTION ===== */
+.preview-section {
+  @apply space-y-6;
+}
+
+.preview-header {
+  @apply text-center mb-6;
+}
+
+.preview-title {
+  @apply text-2xl font-bold text-white mb-2;
+}
+
+.preview-subtitle {
+  @apply text-gray-400;
+}
+
+.preview-card {
+  @apply bg-white/5 border border-white/10 rounded-2xl p-6 mb-6;
+}
+
+.preview-post-header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.preview-author {
+  @apply flex items-center space-x-3;
+}
+
+.author-name {
+  @apply font-semibold text-white;
+}
+
+.user-badge {
+  @apply px-2 py-1 text-xs font-medium rounded-full;
+}
+
+.post-time {
+  @apply text-sm text-gray-400;
+}
+
+.preview-post-title {
+  @apply text-xl font-semibold text-white mb-4;
+}
+
+.preview-tags {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+.preview-tag {
+  @apply px-3 py-1 text-sm bg-white/10 text-gray-300 rounded-lg;
+}
+
+.preview-description {
+  @apply text-gray-200 leading-relaxed mb-4 whitespace-pre-wrap;
+}
+
+.preview-stats {
+  @apply flex items-center space-x-4 text-gray-400;
+}
+
+.stat-item {
+  @apply flex items-center space-x-1;
+}
+
+.stat-item svg {
+  @apply w-4 h-4;
+}
+
+.stat-item span {
+  @apply text-sm;
+}
+
+.preview-actions {
+  @apply flex justify-center;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .ask-question-page {
+    @apply px-4 py-6;
+  }
+
+  .form-container {
+    @apply p-6;
+  }
+
+  .page-title {
+    @apply text-2xl;
+  }
+
+  .header-content {
+    @apply flex-col items-start space-y-4;
+  }
+
+  .category-grid {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+
+  .submit-section {
+    @apply flex-col space-y-3 space-x-0;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    @apply w-full justify-center;
+  }
+}
+
+@media (max-width: 640px) {
+  .ask-question-page {
+    @apply px-3;
+  }
+
+  .form-container {
+    @apply p-4;
+  }
+
+  .tips-section {
+    @apply p-3;
+  }
+
+  .category-grid {
+    @apply grid-cols-1;
+  }
+
+  .privacy-section {
+    @apply p-3;
+  }
+
+  .selected-tags {
+    @apply gap-1;
+  }
+
+  .selected-tag {
+    @apply px-2 py-1 text-xs;
+  }
+
+  .tags-grid {
+    @apply gap-1;
+  }
+
+  .tag-suggestion {
+    @apply px-2 py-1 text-xs;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.form-container:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+}
+
+.category-card.selected:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* ===== FOCUS STYLES ===== */
+.title-input:focus,
+.description-input:focus,
+.submit-btn:focus,
+.cancel-btn:focus,
+.preview-btn:focus,
+.back-btn:focus,
+.privacy-checkbox:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-offset-transparent;
+}
+
+.title-input:focus,
+.description-input:focus {
+  @apply ring-blue-500;
+}
+
+.title-input.error:focus,
+.description-input.error:focus {
+  @apply ring-red-500;
+}
+
+.submit-btn:focus {
+  @apply ring-blue-400;
+}
+
+.cancel-btn:focus,
+.preview-btn:focus,
+.back-btn:focus {
+  @apply ring-gray-400;
+}
+
+.privacy-checkbox:focus {
+  @apply ring-blue-500;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-section {
+  animation: slideIn 0.5s ease-out;
+}
+
+.form-section:nth-child(2) { animation-delay: 0.1s; }
+.form-section:nth-child(3) { animation-delay: 0.2s; }
+.form-section:nth-child(4) { animation-delay: 0.3s; }
+.form-section:nth-child(5) { animation-delay: 0.4s; }
+.form-section:nth-child(6) { animation-delay: 0.5s; }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.preview-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== CATEGORY SPECIFIC COLORS ===== */
+.category-card.bg-blue-500\/20 {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.category-card.bg-purple-500\/20 {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.category-card.bg-green-500\/20 {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.category-card.bg-gray-500\/20 {
+  border-color: rgba(107, 114, 128, 0.3);
+}
+
+/* ===== LOADING STATES ===== */
+.submit-btn:disabled {
+  @apply cursor-not-allowed;
+}
+
+.submit-btn:disabled .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .form-section,
+  .preview-card,
+  .category-card,
+  .submit-btn,
+  .spinner {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .form-container,
+  .preview-card,
+  .tips-section,
+  .privacy-section {
+    @apply border-white/50;
+  }
+  
+  .category-card {
+    @apply border-2;
+  }
+  
+  .selected-tag,
+  .tag-suggestion,
+  .preview-tag {
+    @apply border border-current;
+  }
+  
+  .title-input,
+  .description-input {
+    @apply border-white/50;
+  }
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.description-input::-webkit-scrollbar {
+  width: 6px;
+}
+
+.description-input::-webkit-scrollbar-track {
+  @apply bg-white/5 rounded-full;
+}
+
+.description-input::-webkit-scrollbar-thumb {
+  @apply bg-white/20 rounded-full hover:bg-white/30;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-gradient {
+  @apply bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;
+}
+
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .page-header,
+  .tips-section,
+  .submit-section,
+  .preview-actions {
+    @apply hidden;
+  }
+  
+  .form-container,
+  .preview-card {
+    @apply bg-white text-black border border-gray-300;
+  }
+}
