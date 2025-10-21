@@ -8,5 +8,9 @@ export default defineConfig({
     host: '0.0.0.0', // Allow network access
     port: 5173,      // Match what backend expects
     strictPort: true, // Fail if port is already in use
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
   }
 })
