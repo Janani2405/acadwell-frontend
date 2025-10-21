@@ -276,7 +276,6 @@ const Homepage = () => {
             </p>
             <div className="cta-actions">
               <button className="btn-primary">Get Started Free</button>
-              <button className="btn-secondary">Schedule Demo</button>
             </div>
           </div>
         </div>
@@ -330,7 +329,7 @@ const Homepage = () => {
           </div>
           
           <div className="footer-bottom">
-            <p className="footer-copy">&copy; 2024 AcadWell. All rights reserved.</p>
+            <p className="footer-copy">&copy; 2025 AcadWell. All rights reserved.</p>
             <div className="footer-policy-links">
               <a href="#">Privacy</a>
               <a href="#">Terms</a>
