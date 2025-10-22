@@ -107,7 +107,6 @@ const MessagesPage = () => {
         setShowCreateGroupModal(false);
         setNewGroupForm({ name: '', description: '', isPrivate: false });
         await fetchGroups();
-        // Navigate to the new group
         navigate(`/study-group/${result.group._id}`);
       } else {
         alert(result.message || 'Failed to create group');
@@ -185,35 +184,38 @@ const MessagesPage = () => {
     );
   };
 
+// ✅ CORRECTED formatTimestamp function for MessagesPage.jsx
+// Replace your existing formatTimestamp function with this
+
 const formatTimestamp = (timestamp) => {
   if (!timestamp) return '';
   
   try {
-    // Parse ISO string to Date object
+    // Parse the UTC timestamp from backend
     const messageDate = new Date(timestamp);
     
-    // Validate the date
     if (isNaN(messageDate.getTime())) {
       return '';
     }
     
-    const now = new Date();
+    // Get current time in UTC milliseconds
+    const nowMs = Date.now();
+    const messageDateMs = messageDate.getTime();
     
     // Calculate difference in milliseconds
-    const diffMs = now.getTime() - messageDate.getTime();
+    const diffMs = nowMs - messageDateMs;
     
-    // Prevent negative times (future dates)
+    // Handle future timestamps (shouldn't happen but be safe)
     if (diffMs < 0) {
       return 'Just now';
     }
     
-    // Convert to minutes, hours, days
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
     
-    // Return appropriate time format
-    if (diffMins < 1) {
+    if (diffSecs < 60) {
       return 'Just now';
     }
     if (diffMins < 60) {
@@ -226,7 +228,7 @@ const formatTimestamp = (timestamp) => {
       return `${diffDays}d`;
     }
     
-    // For older messages, show date
+    // For messages older than 7 days, show the date
     return messageDate.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
@@ -247,6 +249,7 @@ const getFullTimestamp = (timestamp) => {
       return '';
     }
     
+    // Display in user's local timezone (IST)
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -261,7 +264,6 @@ const getFullTimestamp = (timestamp) => {
     return '';
   }
 };
-
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
@@ -350,7 +352,11 @@ const getFullTimestamp = (timestamp) => {
                       <Link
                         key={conv.conversation_id}
                         to={`/messages/${conv.conversation_id}`}
-                        className="group bg-slate-800/40 hover:bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 hover:border-slate-600/50 rounded-xl p-4 transition-all hover:shadow-lg hover:scale-[1.01]"
+                        className={`group bg-slate-800/40 hover:bg-slate-800/60 backdrop-blur-sm border ${
+                          unreadCount > 0 
+                            ? 'border-blue-500/50 bg-blue-500/5' 
+                            : 'border-slate-700/50 hover:border-slate-600/50'
+                        } rounded-xl p-4 transition-all hover:shadow-lg hover:scale-[1.01]`}
                       >
                         <div className="flex items-start gap-4">
                           {/* Avatar */}
@@ -359,7 +365,9 @@ const getFullTimestamp = (timestamp) => {
                               isGroup 
                                 ? 'from-purple-500 to-pink-600' 
                                 : 'from-blue-500 to-cyan-600'
-                            } flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
+                            } flex items-center justify-center text-white font-semibold text-lg shadow-lg ${
+                              unreadCount > 0 ? 'ring-2 ring-blue-400' : ''
+                            }`}>
                               {isGroup ? (
                                 <Users className="w-6 h-6" />
                               ) : (
@@ -371,12 +379,18 @@ const getFullTimestamp = (timestamp) => {
                                 <Pin className="w-3 h-3 text-white" />
                               </div>
                             )}
+                            {/* ✅ Unread indicator dot */}
+                            {unreadCount > 0 && (
+                              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-slate-900 rounded-full"></div>
+                            )}
                           </div>
 
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <h3 className="font-semibold text-white truncate flex items-center gap-2">
+                              <h3 className={`font-semibold truncate flex items-center gap-2 ${
+                                unreadCount > 0 ? 'text-white' : 'text-white'
+                              }`}>
                                 {conv.other_preview}
                                 {isGroup && (
                                   <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">
@@ -385,12 +399,13 @@ const getFullTimestamp = (timestamp) => {
                                 )}
                               </h3>
                               <div className="flex items-center gap-2 flex-shrink-0">
+                                {/* ✅ Unread count badge */}
                                 {unreadCount > 0 && (
-                                  <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center">
+                                  <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center animate-pulse">
                                     {unreadCount}
                                   </span>
                                 )}
-                               <span 
+                                <span 
                                   className="text-xs text-slate-400"
                                   title={getFullTimestamp(conv.last_updated)}
                                 >
@@ -403,7 +418,9 @@ const getFullTimestamp = (timestamp) => {
                               {conv.last_message_read && (
                                 <CheckCheck className="w-4 h-4 text-blue-400 flex-shrink-0" />
                               )}
-                              <p className="text-sm text-slate-400 truncate">
+                              <p className={`text-sm truncate ${
+                                unreadCount > 0 ? 'text-white font-medium' : 'text-slate-400'
+                              }`}>
                                 {conv.last_message || 'No messages yet'}
                               </p>
                             </div>

@@ -4,12 +4,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { API_BASE_URL, SOCKET_URL, apiCall } from '../../../api/api';
 import { 
-  Search, Paperclip, Send, Smile, MoreVertical, Pin, Edit2, Trash2, 
+  Search, Paperclip, Send, MoreVertical, Pin, Edit2, Trash2, 
   Check, X, Users, Phone, Video, Info, ChevronDown, CheckCheck, 
   Image as ImageIcon, ArrowLeft, AlertCircle 
 } from 'lucide-react';
 
+
+
 const ChatRoom = () => {
+  // CRITICAL FIX: Add this utility function at the top of ChatRoom.jsx
+// This ensures timestamps are ALWAYS compared correctly regardless of timezone
+
+
+
+
   const { convId } = useParams();
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
@@ -39,7 +47,7 @@ const ChatRoom = () => {
 
     apiCall(`/api/messages/${convId}/info`)
       .then(data => {
-        if (data.conversation) {
+        if (data?.conversation) {
           setConversationInfo(data.conversation);
         }
       })
@@ -52,10 +60,11 @@ const ChatRoom = () => {
 
     apiCall(`/api/messages/${convId}/messages`)
       .then(data => {
-        if (data.messages) {
+        if (data?.messages && Array.isArray(data.messages)) {
           const processedMessages = data.messages.map(msg => ({
             ...msg,
-            content: typeof msg.content === 'string' ? msg.content : String(msg.content || '')
+            content: typeof msg.content === 'string' ? msg.content : String(msg.content || ''),
+            read_by: Array.isArray(msg.read_by) ? msg.read_by : []
           }));
           setMessages(processedMessages);
         }
@@ -63,17 +72,22 @@ const ChatRoom = () => {
       .catch(err => console.error('Error fetching messages:', err));
   }, [convId, token]);
 
-  // Fetch pinned messages
+  // Fetch pinned messages - WITH ERROR HANDLING
   useEffect(() => {
     if (!token || !convId) return;
 
+    // Only fetch if endpoint exists
     apiCall(`/api/messages/${convId}/pinned`)
       .then(data => {
-        if (data.pinned_messages) {
+        if (data?.pinned_messages && Array.isArray(data.pinned_messages)) {
           setPinnedMessages(data.pinned_messages);
         }
       })
-      .catch(err => console.error('Error fetching pinned messages:', err));
+      .catch(err => {
+        // Silently handle error - pinned messages are optional feature
+        console.log('Pinned messages not available:', err.message);
+        setPinnedMessages([]);
+      });
   }, [convId, token]);
 
   // Socket.IO connection
@@ -82,6 +96,7 @@ const ChatRoom = () => {
 
     socketRef.current = io(SOCKET_URL, {
       auth: { token },
+      transports: ['websocket', 'polling']
     });
 
     socketRef.current.on('connect', () => {
@@ -96,36 +111,46 @@ const ChatRoom = () => {
     });
 
     socketRef.current.on('new_message', msg => {
-      if (msg.conversation_id === convId) {
+      if (msg?.conversation_id === convId) {
         const processedMessage = {
           ...msg,
-          content: typeof msg.content === 'string' ? msg.content : String(msg.content || '')
+          content: typeof msg.content === 'string' ? msg.content : String(msg.content || ''),
+          read_by: Array.isArray(msg.read_by) ? msg.read_by : [],
+          timestamp: msg.timestamp || new Date().toISOString()
         };
         setMessages(prev => [...prev, processedMessage]);
       }
     });
 
     socketRef.current.on('message_edited', data => {
-      setMessages(prev => prev.map(m => 
-        m.message_id === data.message_id 
-          ? { ...m, content: data.content, edited: true }
-          : m
-      ));
+      if (data?.message_id && data?.content) {
+        setMessages(prev => prev.map(m => 
+          m.message_id === data.message_id 
+            ? { ...m, content: data.content, edited: true }
+            : m
+        ));
+      }
     });
 
     socketRef.current.on('message_deleted', data => {
-      setMessages(prev => prev.filter(m => m.message_id !== data.message_id));
+      if (data?.message_id) {
+        setMessages(prev => prev.filter(m => m.message_id !== data.message_id));
+      }
     });
 
     socketRef.current.on('messages_read', data => {
-      setMessages(prev => prev.map(m => ({
-        ...m,
-        read_by: m.read_by.includes(data.user_id) ? m.read_by : [...m.read_by, data.user_id]
-      })));
+      if (data?.user_id) {
+        setMessages(prev => prev.map(m => ({
+          ...m,
+          read_by: Array.isArray(m.read_by) && !m.read_by.includes(data.user_id) 
+            ? [...m.read_by, data.user_id] 
+            : m.read_by
+        })));
+      }
     });
 
     socketRef.current.on('user_typing', data => {
-      if (data.user_id !== userId) {
+      if (data?.user_id && data.user_id !== userId) {
         setIsTyping(true);
         setTimeout(() => setIsTyping(false), 3000);
       }
@@ -150,7 +175,7 @@ const ChatRoom = () => {
 
   // Mark messages as read when viewing
   useEffect(() => {
-    if (!token || !convId || !isConnected) return;
+    if (!token || !convId || !isConnected || messages.length === 0) return;
 
     const timer = setTimeout(() => {
       apiCall(`/api/messages/${convId}/mark-read`, {
@@ -164,7 +189,7 @@ const ChatRoom = () => {
   // Send message
   const sendMessage = () => {
     const messageText = text.trim();
-    if (!messageText || !socketRef.current) return;
+    if (!messageText || !socketRef.current || !isConnected) return;
     
     socketRef.current.emit('send_message', {
       conversation_id: convId,
@@ -177,16 +202,16 @@ const ChatRoom = () => {
 
   // Handle typing indicator
   const handleTyping = () => {
-    if (!socketRef.current) return;
+    if (!socketRef.current || !isConnected) return;
 
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
 
-    socketRef.current.emit('typing', { conversation_id: convId });
+    socketRef.current.emit('typing', { conversation_id: convId, token });
 
     const timeout = setTimeout(() => {
-      socketRef.current.emit('stop_typing', { conversation_id: convId });
+      socketRef.current.emit('stop_typing', { conversation_id: convId, token });
     }, 3000);
 
     setTypingTimeout(timeout);
@@ -229,25 +254,27 @@ const ChatRoom = () => {
         method: 'POST'
       });
       
-      if (response.is_pinned) {
-        const msg = messages.find(m => m.message_id === messageId);
-        if (msg) {
-          setPinnedMessages(prev => [...prev, { ...msg, is_pinned: true }]);
+      if (response?.is_pinned !== undefined) {
+        if (response.is_pinned) {
+          const msg = messages.find(m => m.message_id === messageId);
+          if (msg) {
+            setPinnedMessages(prev => [...prev, { ...msg, is_pinned: true }]);
+          }
+        } else {
+          setPinnedMessages(prev => prev.filter(m => m.message_id !== messageId));
         }
-      } else {
-        setPinnedMessages(prev => prev.filter(m => m.message_id !== messageId));
+        
+        setMessages(prev => prev.map(m => 
+          m.message_id === messageId 
+            ? { ...m, is_pinned: response.is_pinned }
+            : m
+        ));
       }
-      
-      setMessages(prev => prev.map(m => 
-        m.message_id === messageId 
-          ? { ...m, is_pinned: response.is_pinned }
-          : m
-      ));
       
       setSelectedMessage(null);
     } catch (err) {
       console.error('Error toggling pin:', err);
-      alert('Failed to pin/unpin message');
+      alert('Pin feature not available');
     }
   };
 
@@ -260,53 +287,61 @@ const ChatRoom = () => {
     }
   };
 
- const formatTimestamp = (timestamp) => {
+// ✅ CORRECTED timestamp functions for ChatRoom.jsx
+// Replace your existing timestamp functions with these
+
+// Remove the getTimeDifferenceInSeconds function entirely - it's not needed
+
+const formatTimestamp = (timestamp) => {
   if (!timestamp) return '';
   
   try {
-    // Parse the timestamp - handle both ISO strings and Date objects
-    const date = typeof timestamp === 'string' 
-      ? new Date(timestamp) 
-      : new Date(timestamp);
+    // Parse the UTC timestamp from backend
+    const messageDate = new Date(timestamp);
     
-    // Verify it's a valid date
-    if (isNaN(date.getTime())) {
-      console.warn('Invalid timestamp:', timestamp);
-      return 'Invalid date';
+    if (isNaN(messageDate.getTime())) {
+      return '';
     }
     
-    const now = new Date();
+    // Get current time in UTC milliseconds
+    const nowMs = Date.now();
+    const messageDateMs = messageDate.getTime();
     
     // Calculate difference in milliseconds
-    const diffMs = now.getTime() - date.getTime();
+    const diffMs = nowMs - messageDateMs;
     
-    // Handle negative differences (future dates - shouldn't happen but just in case)
+    // Handle future timestamps (shouldn't happen but be safe)
     if (diffMs < 0) {
       return 'Just now';
     }
     
-    // Convert to different time units
     const diffSecs = Math.floor(diffMs / 1000);
     const diffMins = Math.floor(diffSecs / 60);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
     
-    // Return appropriate format
+    // Less than 1 minute
     if (diffSecs < 60) {
       return 'Just now';
     }
+    
+    // Less than 1 hour
     if (diffMins < 60) {
       return `${diffMins}m ago`;
     }
+    
+    // Less than 24 hours
     if (diffHours < 24) {
       return `${diffHours}h ago`;
     }
+    
+    // Less than 7 days
     if (diffDays < 7) {
       return `${diffDays}d ago`;
     }
     
-    // For older messages, show full date and time
-    return date.toLocaleDateString('en-US', {
+    // Older than 7 days - show date
+    return messageDate.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -315,42 +350,39 @@ const ChatRoom = () => {
     });
   } catch (error) {
     console.error('Error formatting timestamp:', error);
-    return 'Invalid date';
+    return '';
   }
 };
-
-// ============================================================================
-// ALSO ADD THIS FUNCTION FOR BETTER READABILITY IN MESSAGE LIST
-// ============================================================================
 
 const getReadableTime = (timestamp) => {
   if (!timestamp) return '';
   
   try {
-    const date = typeof timestamp === 'string' 
-      ? new Date(timestamp) 
-      : new Date(timestamp);
+    const date = new Date(timestamp);
     
     if (isNaN(date.getTime())) {
       return 'Invalid date';
     }
     
-    // Format with time
+    // Display in user's local timezone (IST)
     return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
       hour12: true
     });
   } catch (error) {
-    console.error('Error getting readable time:', error);
-    return 'Invalid date';
+    console.error('Error formatting readable time:', error);
+    return '';
   }
 };
+
+// ❌ REMOVE the testTimestamp function and its useEffect call - it's just for debugging
   const filteredMessages = searchQuery
-    ? messages.filter(m => m.content.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? messages.filter(m => m?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
     : messages;
 
   const isGroup = conversationInfo?.participants?.length > 2;
@@ -480,9 +512,11 @@ const getReadableTime = (timestamp) => {
             </div>
           ) : (
             filteredMessages.map((msg, index) => {
+              if (!msg || !msg.message_id) return null;
+
               const isMyMessage = String(msg.sender_id) === String(userId);
-              const showAvatar = !isMyMessage && (index === 0 || filteredMessages[index - 1].sender_id !== msg.sender_id);
-              const isRead = msg.read_by && msg.read_by.length > 1;
+              const showAvatar = !isMyMessage && (index === 0 || filteredMessages[index - 1]?.sender_id !== msg.sender_id);
+              const isRead = Array.isArray(msg.read_by) && msg.read_by.length > 1;
 
               return (
                 <div
@@ -548,7 +582,7 @@ const getReadableTime = (timestamp) => {
                             }`}
                           >
                             <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                              {msg.content}
+                              {msg.content || ''}
                             </p>
                             {msg.is_pinned && (
                               <div className="mt-1 flex items-center gap-1 text-xs text-yellow-400">
@@ -606,18 +640,9 @@ const getReadableTime = (timestamp) => {
 
                     {/* Timestamp and Status */}
                     <div className={`flex items-center gap-1 mt-1 text-xs text-slate-500 ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}`}>
-                      {/* <span>{formatTimestamp(msg.timestamp)}</span> */}
                       <span 
                         className="text-xs text-slate-500 cursor-help"
-                        title={new Date(msg.timestamp).toLocaleString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                          hour12: true
-                        })}
+                        title={getReadableTime(msg.timestamp)}
                       >
                         {formatTimestamp(msg.timestamp)}
                       </span>
@@ -689,10 +714,9 @@ const getReadableTime = (timestamp) => {
       </div>
 
       {/* Side Panel - Conversation Info */}
-      {showInfo && (
+      {showInfo && conversationInfo && (
         <div className="w-80 bg-slate-800/50 backdrop-blur-lg border-l border-slate-700/50 overflow-y-auto">
           <div className="p-6">
-            {/* Close Button */}
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-semibold text-white">Conversation Info</h3>
               <button
@@ -703,40 +727,19 @@ const getReadableTime = (timestamp) => {
               </button>
             </div>
 
-            {/* Conversation Details */}
             <div className="text-center mb-6">
               <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br ${
                 isGroup ? 'from-purple-500 to-pink-600' : 'from-blue-500 to-cyan-600'
               } flex items-center justify-center text-3xl shadow-xl mb-4`}>
-                {isGroup ? <Users className="w-10 h-10 text-white" /> : conversationInfo?.name?.charAt(0).toUpperCase() || '?'}
+                {isGroup ? <Users className="w-10 h-10 text-white" /> : conversationInfo.name?.charAt(0).toUpperCase() || '?'}
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">{conversationInfo?.name || 'Chat'}</h3>
+              <h3 className="text-xl font-bold text-white mb-1">{conversationInfo.name || 'Chat'}</h3>
               <p className="text-sm text-slate-400">
-                {isGroup ? `${conversationInfo?.participants?.length || 0} members` : 'Direct Message'}
+                {isGroup ? `${conversationInfo.participants?.length || 0} members` : 'Direct Message'}
               </p>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-3 gap-2 mb-6">
-              <button className="flex flex-col items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition-all">
-                <Phone className="w-5 h-5 text-slate-300" />
-                <span className="text-xs text-slate-400">Call</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition-all">
-                <Video className="w-5 h-5 text-slate-300" />
-                <span className="text-xs text-slate-400">Video</span>
-              </button>
-              <button 
-                onClick={() => setShowSearch(!showSearch)}
-                className="flex flex-col items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition-all"
-              >
-                <Search className="w-5 h-5 text-slate-300" />
-                <span className="text-xs text-slate-400">Search</span>
-              </button>
-            </div>
-
-            {/* Members */}
-            {conversationInfo?.participants && conversationInfo.participants.length > 0 && (
+            {conversationInfo.participants && conversationInfo.participants.length > 0 && (
               <div className="mb-6">
                 <h4 className="text-sm font-semibold text-slate-400 mb-3">
                   {isGroup ? 'Members' : 'Participant'}
@@ -749,8 +752,7 @@ const getReadableTime = (timestamp) => {
                           {participant.name?.charAt(0) || '?'}
                         </div>
                         <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-slate-800 rounded-full ${
-                          participant.status === 'online' ? 'bg-green-500' : 
-                          participant.status === 'away' ? 'bg-yellow-500' : 'bg-slate-500'
+                          participant.status === 'online' ? 'bg-green-500' : 'bg-slate-500'
                         }`}></div>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -763,30 +765,10 @@ const getReadableTime = (timestamp) => {
               </div>
             )}
 
-            {/* Shared Media */}
-            <div className="mb-6">
-              <h4 className="text-sm font-semibold text-slate-400 mb-3">Shared Media</h4>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div key={i} className="aspect-square bg-slate-700/30 rounded-lg flex items-center justify-center hover:bg-slate-700/50 transition-all cursor-pointer">
-                    <ImageIcon className="w-6 h-6 text-slate-500" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Settings */}
             <div className="space-y-2">
               <button className="w-full flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg transition-all text-left">
                 <span className="text-sm text-slate-300">Notifications</span>
                 <ChevronDown className="w-4 h-4 text-slate-400" />
-              </button>
-              <button className="w-full flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg transition-all text-left">
-                <span className="text-sm text-slate-300">Privacy & Support</span>
-                <ChevronDown className="w-4 h-4 text-slate-400" />
-              </button>
-              <button className="w-full flex items-center justify-between p-3 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all text-left border border-red-500/30">
-                <span className="text-sm text-red-400">Leave Conversation</span>
               </button>
             </div>
           </div>
