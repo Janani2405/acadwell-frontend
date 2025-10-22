@@ -37,8 +37,10 @@ const Sidebar = ({ isSidebarOpen, closeSidebar }) => {
         <nav className="sidebar-nav">
           <ul>
             <li className="nav-item active" onClick={closeSidebar}>
+              <Link to="/dashboard/student" className="flex items-center space-x-3 w-full">
               <Home className="nav-icon" />
               <span>Dashboard</span>
+              </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
               <HelpCircle className="nav-icon" />

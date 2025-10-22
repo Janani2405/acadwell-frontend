@@ -98,6 +98,7 @@ export const apiCall = async (endpoint, options = {}) => {
 };
 
 // ==================== GRADES API ====================
+// ⭐ THIS IS THE UPDATED SECTION - REPLACE FROM HERE ⭐
 export const gradesApi = {
   // Student: Fetch my grades
   fetchMyGrades: async () => {
@@ -161,8 +162,51 @@ export const gradesApi = {
       console.error('Error fetching upload history:', error);
       throw error;
     }
+  },
+
+  // ⭐ NEW: Teacher: Delete an upload
+  deleteUpload: async (uploadId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!uploadId) {
+        throw new Error('Upload ID is required');
+      }
+
+      return await apiCall(`/api/teacher/delete_upload/${uploadId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Error deleting upload:', error);
+      throw error;
+    }
+  },
+
+  // ⭐ NEW: Teacher: Get upload details
+  getUploadDetails: async (uploadId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!uploadId) {
+        throw new Error('Upload ID is required');
+      }
+
+      return await apiCall(`/api/teacher/upload_details/${uploadId}`, {
+        method: 'GET'
+      });
+    } catch (error) {
+      console.error('Error fetching upload details:', error);
+      throw error;
+    }
   }
 };
+// ⭐ END OF UPDATED SECTION ⭐
 
 // ==================== WELLNESS API ====================
 export const wellnessApi = {
