@@ -13,7 +13,6 @@ import QuestionsFeedCard from './QuestionsFeedCard';
 import WellnessCard from './WellnessCard';
 import ProgressCard from './ProgressCard';
 import StudyStatsCard from './StudyStatsCard';
-import DeadlinesCard from './DeadlinesCard';
 import StudyGroupsCard from './StudyGroupsCard';
 import NotificationsCard from './NotificationsCard';
 
