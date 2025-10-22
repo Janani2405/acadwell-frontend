@@ -23,6 +23,14 @@ const MoodLoggingModal = ({ isOpen, onClose, onMoodLogged }) => {
     { id: 'overwhelmed', emoji: '😫', label: 'Overwhelmed', description: 'Too much to handle' }
   ];
 
+  // ✅ FIXED: Format date correctly without timezone issues
+  const formatDateForAPI = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Get calendar days for current month
   const getCalendarDays = () => {
     const year = currentMonth.getFullYear();
@@ -46,7 +54,7 @@ const MoodLoggingModal = ({ isOpen, onClose, onMoodLogged }) => {
       days.push({
         day,
         date,
-        dateString: date.toISOString().split('T')[0]
+        dateString: formatDateForAPI(date) // ✅ Use local date formatting
       });
     }
     
@@ -54,18 +62,19 @@ const MoodLoggingModal = ({ isOpen, onClose, onMoodLogged }) => {
   };
 
   const isDateSelected = (dateString) => {
-    return selectedDate.toISOString().split('T')[0] === dateString;
+    return formatDateForAPI(selectedDate) === dateString;
   };
 
   const isDateInFuture = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
     return date > today;
   };
 
   const isToday = (date) => {
     const today = new Date();
-    return date.toDateString() === today.toDateString();
+    return formatDateForAPI(date) === formatDateForAPI(today);
   };
 
   const previousMonth = () => {
@@ -99,14 +108,18 @@ const MoodLoggingModal = ({ isOpen, onClose, onMoodLogged }) => {
 
     try {
       const mood = moods.find(m => m.id === selectedMood);
-      const selectedDateString = selectedDate.toISOString().split('T')[0];
+      const selectedDateString = formatDateForAPI(selectedDate); // ✅ FIXED: Use local date
+      
+      console.log('📅 Submitting mood for date:', selectedDateString); // Debug log
       
       const response = await logMood({
         mood: selectedMood,
         emoji: mood.emoji,
         note: note.trim(),
-        date: selectedDateString  // Include date in request
+        date: selectedDateString  // ✅ Now sends correct local date
       });
+
+      console.log('✅ Mood logged successfully:', response);
 
       // Success - close modal and refresh dashboard
       if (onMoodLogged) {
@@ -120,7 +133,7 @@ const MoodLoggingModal = ({ isOpen, onClose, onMoodLogged }) => {
       onClose();
       
     } catch (err) {
-      console.error('Error logging mood:', err);
+      console.error('❌ Error logging mood:', err);
       setError('Failed to log mood. Please try again.');
     } finally {
       setLoading(false);
