@@ -11,13 +11,13 @@ import {
   Calendar
 } from 'lucide-react';
 import { apiCall } from '../../../../api/api';
-import MoodLoggingModal from '../../wellness/MoodLoggingModal'; // ✨ Import modal
+import MoodLoggingModal from '../../wellness/MoodLoggingModal';
 
 const WellnessCard = () => {
   const [wellnessData, setWellnessData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showMoodModal, setShowMoodModal] = useState(false); // ✨ Add modal state
+  const [showMoodModal, setShowMoodModal] = useState(false);
  
   useEffect(() => {
     fetchWellnessData();
@@ -26,7 +26,7 @@ const WellnessCard = () => {
   const fetchWellnessData = async () => {
     try {
       setLoading(true);
-      const data = await apiCall('/api/wellness/dashboard/student', { method: 'GET' }); // ✨ Fixed endpoint
+      const data = await apiCall('/api/wellness/dashboard/student', { method: 'GET' });
       setWellnessData(data);
       setError(null);
     } catch (err) {
@@ -38,7 +38,6 @@ const WellnessCard = () => {
   };
 
   const handleMoodLogged = (response) => {
-    // Refresh dashboard after logging mood
     fetchWellnessData();
   };
 
@@ -199,25 +198,17 @@ const WellnessCard = () => {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          <button 
-            className="flex-1 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-lg text-sm font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
-            onClick={() => window.location.href = '/wellness/dashboard'}
-          >
-            View Dashboard
-          </button>
-          {/* ✨ FIXED: Open modal instead of navigating */}
-          <button 
-            className="flex-1 py-2 bg-white/5 text-gray-300 rounded-lg text-sm font-medium hover:bg-white/10 transition-all duration-200"
-            onClick={() => setShowMoodModal(true)}
-          >
-            Log Mood
-          </button>
-        </div>
+        {/* Single Action Button - Log Mood */}
+        <button 
+          className="w-full py-2.5 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-lg text-sm font-medium hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
+          onClick={() => setShowMoodModal(true)}
+        >
+          <Calendar className="w-4 h-4" />
+          Log Mood
+        </button>
       </div>
 
-      {/* ✨ Add Mood Logging Modal */}
+      {/* Mood Logging Modal */}
       <MoodLoggingModal
         isOpen={showMoodModal}
         onClose={() => setShowMoodModal(false)}
