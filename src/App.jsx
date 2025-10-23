@@ -44,6 +44,8 @@ import AdminRoute from './routes/AdminRoute';
 import AdminLogin from './components/dashboards/admin/AdminLogin';
 import AdminDashboard from './components/dashboards/admin/AdminDashboard';
 
+import StudentStatistics from './components/ui/dashboards/student/StudentStatistics';
+
 import './App.css';
 
 function App() {
@@ -98,6 +100,7 @@ function App() {
           {/* Grades Routes */}
           <Route path="/dashboard/student/grades" element={<StudentGrades />} />
           <Route path="/dashboard/teacher/grades" element={<TeacherGradeUpload />} />
+          <Route path="/dashboard/student/statistics" element={<StudentStatistics />} />
 
           {/* Study Group Routes */}
           <Route path="/study-group/:groupId" element={<StudyGroupChat />} />
