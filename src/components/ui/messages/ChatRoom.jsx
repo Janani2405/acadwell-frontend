@@ -37,6 +37,8 @@ const ChatRoom = () => {
   const [ratingFeedback, setRatingFeedback] = useState('');
   const [reportReason, setReportReason] = useState('');
   const [reportDetails, setReportDetails] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
   
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -257,6 +259,57 @@ const ChatRoom = () => {
     }
   };
 
+  // ✨ NEW: Delete conversation function
+  const handleDeleteConversation = async () => {
+    if (!confirm('Are you sure you want to delete this entire conversation? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const result = await anonymousApi.deleteConversation(convId);
+      if (result.success) {
+        alert('Conversation deleted successfully');
+        navigate('/messages');
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      alert('Failed to delete conversation');
+    }
+  };
+
+  // ✨ NEW: Reset to anonymous function
+  const handleResetToAnonymous = async () => {
+    if (!confirm('Reset this conversation back to anonymous mode? Both users will see anonymous IDs again.')) {
+      return;
+    }
+
+    try {
+      const result = await anonymousApi.resetToAnonymous(convId);
+      if (result.success) {
+        // Update local state
+        setIdentityRevealed(false);
+        setRevealRequests([]);
+        
+        // Refresh conversation info
+        const data = await apiCall(`/api/messages/${convId}/info`);
+        if (data?.conversation) {
+          setConversationInfo(data.conversation);
+        }
+        
+        // Refresh messages to see system message
+        const messagesData = await apiCall(`/api/messages/${convId}/messages`);
+        if (messagesData?.messages) {
+          setMessages(messagesData.messages);
+        }
+        
+        alert('Conversation reset to anonymous successfully');
+      }
+    } catch (error) {
+      console.error('Error resetting conversation:', error);
+      alert('Failed to reset conversation');
+    }
+  };
+
   // Send message
   const sendMessage = () => {
     const messageText = text.trim();
@@ -358,87 +411,82 @@ const ChatRoom = () => {
     }
   };
 
-// ✅ REPLACE ONLY THESE TWO FUNCTIONS IN ChatRoom.jsx
-// Find the existing formatTimestamp and getReadableTime functions and replace them with these:
-
-const formatTimestamp = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    const messageDate = new Date(timestamp);
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(messageDate.getTime())) {
+    try {
+      const messageDate = new Date(timestamp);
+      
+      if (isNaN(messageDate.getTime())) {
+        return '';
+      }
+      
+      const nowMs = Date.now();
+      const messageDateMs = messageDate.getTime();
+      const diffMs = nowMs - messageDateMs;
+      
+      if (diffMs < 0) {
+        return 'Just now';
+      }
+      
+      const diffSecs = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSecs / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffSecs < 60) {
+        return 'Just now';
+      }
+      
+      if (diffMins < 60) {
+        return `${diffMins}m ago`;
+      }
+      
+      if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      }
+      
+      if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      }
+      
+      return messageDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error formatting timestamp:', error);
       return '';
     }
-    
-    const nowMs = Date.now();
-    const messageDateMs = messageDate.getTime();
-    const diffMs = nowMs - messageDateMs;
-    
-    if (diffMs < 0) {
-      return 'Just now';
-    }
-    
-    const diffSecs = Math.floor(diffMs / 1000);
-    const diffMins = Math.floor(diffSecs / 60);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffSecs < 60) {
-      return 'Just now';
-    }
-    
-    if (diffMins < 60) {
-      return `${diffMins}m ago`;
-    }
-    
-    if (diffHours < 24) {
-      return `${diffHours}h ago`;
-    }
-    
-    if (diffDays < 7) {
-      return `${diffDays}d ago`;
-    }
-    
-    return messageDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  } catch (error) {
-    console.error('Error formatting timestamp:', error);
-    return '';
-  }
-};
+  };
 
-const getReadableTime = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    const date = new Date(timestamp);
+  const getReadableTime = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
+    try {
+      const date = new Date(timestamp);
+      
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+      
+      return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error formatting readable time:', error);
+      return '';
     }
-    
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  } catch (error) {
-    console.error('Error formatting readable time:', error);
-    return '';
-  }
-};
-
-
+  };
 
   const filteredMessages = searchQuery
     ? messages.filter(m => m?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -518,6 +566,18 @@ const getReadableTime = (timestamp) => {
                       <Eye className="w-5 h-5" />
                     </button>
                   )}
+                  
+                  {/* ✨ NEW: Reset button (only show if revealed) */}
+                  {identityRevealed && (
+                    <button
+                      onClick={handleResetToAnonymous}
+                      className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-purple-400"
+                      title="Reset to anonymous"
+                    >
+                      <Shield className="w-5 h-5" />
+                    </button>
+                  )}
+                  
                   <button
                     onClick={() => setShowRatingModal(true)}
                     className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-yellow-400"
@@ -531,6 +591,15 @@ const getReadableTime = (timestamp) => {
                     title="Report user"
                   >
                     <Flag className="w-5 h-5" />
+                  </button>
+                  
+                  {/* ✨ NEW: Delete conversation button */}
+                  <button
+                    onClick={handleDeleteConversation}
+                    className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-red-500"
+                    title="Delete conversation"
+                  >
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </>
               )}
@@ -889,6 +958,40 @@ const getReadableTime = (timestamp) => {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* ✨ NEW: Anonymous Actions in Side Panel */}
+            {isAnonymous && (
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-slate-400 mb-3">
+                  Anonymous Actions
+                </h4>
+                <div className="space-y-2">
+                  {identityRevealed && (
+                    <button
+                      onClick={handleResetToAnonymous}
+                      className="w-full flex items-center justify-between p-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg transition-all text-left"
+                    >
+                      <div>
+                        <div className="text-sm font-medium text-purple-300">Reset to Anonymous</div>
+                        <div className="text-xs text-purple-400/70">Hide identities again</div>
+                      </div>
+                      <Shield className="w-5 h-5 text-purple-400" />
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={handleDeleteConversation}
+                    className="w-full flex items-center justify-between p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-all text-left"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-red-300">Delete Conversation</div>
+                      <div className="text-xs text-red-400/70">Permanently delete all messages</div>
+                    </div>
+                    <Trash2 className="w-5 h-5 text-red-400" />
+                  </button>
                 </div>
               </div>
             )}

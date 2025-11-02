@@ -336,6 +336,57 @@ export const adminApi = {
       console.error('Failed to fetch activity logs:', error);
       throw error;
     }
+  },
+    // ==================== ANONYMOUS REPORTS ====================
+  
+  /**
+   * Get all anonymous reports with filters
+   * @param {string} status - Filter by status (pending, reviewed, resolved, dismissed, all)
+   * @returns {Promise} - Reports list
+   */
+  getAnonymousReports: async (status = 'pending') => {
+    try {
+      const response = await axiosInstance.get('/api/admin/anonymous/reports', {
+        params: { status }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch anonymous reports:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Update report status (admin only)
+   * @param {string} reportId - Report ID
+   * @param {string} status - New status (reviewed, resolved, dismissed)
+   * @returns {Promise} - Update confirmation
+   */
+  updateAnonymousReportStatus: async (reportId, status) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/admin/anonymous/reports/${reportId}`,
+        { status }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to update report status:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Get anonymous reports statistics
+   * @returns {Promise} - Stats
+   */
+  getAnonymousReportsStats: async () => {
+    try {
+      const response = await axiosInstance.get('/api/admin/anonymous/reports/stats');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch anonymous reports stats:', error);
+      throw error;
+    }
   }
 };
 

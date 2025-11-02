@@ -11,6 +11,7 @@ import { Menu, X } from 'lucide-react';
 // Import components
 import AdminSidebar from './AdminSidebar';
 import AdminTopbar from './AdminTopbar';
+import AnonymousReports from './pages/AnonymousReports';
 
 // Import all pages
 import Overview from './pages/Overview';
@@ -63,6 +64,7 @@ const AdminDashboard = () => {
             <Route path="messages" element={<ContentModeration />} />
             <Route path="wellness" element={<WellnessMonitoring />} />
             <Route path="activity" element={<ActivityLogs />} />
+            <Route path="anonymous-reports" element={<AnonymousReports />} />
             <Route path="settings" element={<Settings />} />
             
             {/* Catch all - redirect to overview */}

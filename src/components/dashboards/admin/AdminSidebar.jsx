@@ -60,6 +60,12 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       description: 'Activity logs'
     },
     {
+      name: 'Anonymous Reports',
+      path: '/admin/anonymous-reports',
+      icon: Shield,
+      badge: null // Optional: You can add a badge count later
+    },
+    {
       name: 'Settings',
       path: '/admin/dashboard/settings',
       icon: Settings,

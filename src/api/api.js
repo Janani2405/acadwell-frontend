@@ -763,5 +763,86 @@ export const anonymousApi = {
       console.error('Error updating status:', error);
       throw error;
     }
+  },
+  deleteConversation: async (conversationId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!conversationId) {
+        throw new Error('conversationId is required');
+      }
+
+      return await apiCall(`/api/anonymous/conversation/${conversationId}/delete`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      throw error;
+    }
+  },
+
+  // ✨ NEW: Reset conversation to anonymous
+  resetToAnonymous: async (conversationId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!conversationId) {
+        throw new Error('conversationId is required');
+      }
+
+      return await apiCall(`/api/anonymous/conversation/${conversationId}/reset`, {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.error('Error resetting conversation:', error);
+      throw error;
+    }
+  },
+
+  // ✨ NEW: Get all reports (admin only)
+  getAllReports: async (status = 'pending') => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const url = `/api/anonymous/admin/reports?status=${status}`;
+
+      return await apiCall(url, {
+        method: 'GET'
+      });
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      throw error;
+    }
+  },
+
+  // ✨ NEW: Update report status (admin only)
+  updateReportStatus: async (reportId, status) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!reportId || !status) {
+        throw new Error('reportId and status are required');
+      }
+
+      return await apiCall(`/api/anonymous/admin/reports/${reportId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      });
+    } catch (error) {
+      console.error('Error updating report status:', error);
+      throw error;
+    }
   }
 };
