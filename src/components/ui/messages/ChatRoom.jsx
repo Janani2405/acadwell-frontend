@@ -2,22 +2,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { API_BASE_URL, SOCKET_URL, apiCall } from '../../../api/api';
+import { API_BASE_URL, SOCKET_URL, apiCall, anonymousApi } from '../../../api/api';
 import { 
   Search, Paperclip, Send, MoreVertical, Pin, Edit2, Trash2, 
   Check, X, Users, Phone, Video, Info, ChevronDown, CheckCheck, 
-  Image as ImageIcon, ArrowLeft, AlertCircle 
+  Image as ImageIcon, ArrowLeft, AlertCircle, Shield, Eye, Star, Flag, Ban 
 } from 'lucide-react';
 
-
-
 const ChatRoom = () => {
-  // CRITICAL FIX: Add this utility function at the top of ChatRoom.jsx
-// This ensures timestamps are ALWAYS compared correctly regardless of timezone
-
-
-
-
   const { convId } = useParams();
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
@@ -35,6 +27,17 @@ const ChatRoom = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   
+  // ✨ NEW: Anonymous messaging states
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [identityRevealed, setIdentityRevealed] = useState(false);
+  const [revealRequests, setRevealRequests] = useState([]);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [ratingFeedback, setRatingFeedback] = useState('');
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
+  
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -49,6 +52,10 @@ const ChatRoom = () => {
       .then(data => {
         if (data?.conversation) {
           setConversationInfo(data.conversation);
+          // ✨ NEW: Set anonymous status
+          setIsAnonymous(data.conversation.isAnonymous || false);
+          setIdentityRevealed(data.conversation.identityRevealed || false);
+          setRevealRequests(data.conversation.revealRequests || []);
         }
       })
       .catch(err => console.error('Error fetching conversation info:', err));
@@ -72,11 +79,10 @@ const ChatRoom = () => {
       .catch(err => console.error('Error fetching messages:', err));
   }, [convId, token]);
 
-  // Fetch pinned messages - WITH ERROR HANDLING
+  // Fetch pinned messages
   useEffect(() => {
     if (!token || !convId) return;
 
-    // Only fetch if endpoint exists
     apiCall(`/api/messages/${convId}/pinned`)
       .then(data => {
         if (data?.pinned_messages && Array.isArray(data.pinned_messages)) {
@@ -84,7 +90,6 @@ const ChatRoom = () => {
         }
       })
       .catch(err => {
-        // Silently handle error - pinned messages are optional feature
         console.log('Pinned messages not available:', err.message);
         setPinnedMessages([]);
       });
@@ -185,6 +190,72 @@ const ChatRoom = () => {
 
     return () => clearTimeout(timer);
   }, [convId, token, isConnected, messages.length]);
+
+  // ✨ NEW: Request identity reveal
+  const handleRevealRequest = async () => {
+    try {
+      const result = await anonymousApi.requestReveal(convId);
+      if (result.success) {
+        if (result.revealed) {
+          setIdentityRevealed(true);
+          alert('Identities revealed! You can now see each other\'s real names.');
+          // Refresh conversation info
+          const data = await apiCall(`/api/messages/${convId}/info`);
+          if (data?.conversation) {
+            setConversationInfo(data.conversation);
+          }
+        } else {
+          alert('Reveal request sent. Waiting for other user\'s approval.');
+          setRevealRequests(prev => [...prev, userId]);
+        }
+      }
+    } catch (error) {
+      console.error('Error requesting reveal:', error);
+      alert('Failed to request reveal');
+    }
+  };
+
+  // ✨ NEW: Rate user
+  const handleRateUser = async () => {
+    if (rating === 0) {
+      alert('Please select a rating');
+      return;
+    }
+
+    try {
+      const result = await anonymousApi.rateUser(convId, rating, ratingFeedback);
+      if (result.success) {
+        setShowRatingModal(false);
+        setRating(0);
+        setRatingFeedback('');
+        alert('Rating submitted successfully!');
+      }
+    } catch (error) {
+      console.error('Error rating user:', error);
+      alert('Failed to submit rating');
+    }
+  };
+
+  // ✨ NEW: Report user
+  const handleReportUser = async () => {
+    if (!reportReason) {
+      alert('Please select a reason');
+      return;
+    }
+
+    try {
+      const result = await anonymousApi.reportUser(convId, reportReason, reportDetails);
+      if (result.success) {
+        setShowReportModal(false);
+        setReportReason('');
+        setReportDetails('');
+        alert('Report submitted successfully. We will review it shortly.');
+      }
+    } catch (error) {
+      console.error('Error reporting user:', error);
+      alert('Failed to submit report');
+    }
+  };
 
   // Send message
   const sendMessage = () => {
@@ -287,100 +358,83 @@ const ChatRoom = () => {
     }
   };
 
-// ✅ CORRECTED timestamp functions for ChatRoom.jsx
-// Replace your existing timestamp functions with these
-
-// Remove the getTimeDifferenceInSeconds function entirely - it's not needed
-
-const formatTimestamp = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    // Parse the UTC timestamp from backend
-    const messageDate = new Date(timestamp);
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(messageDate.getTime())) {
+    try {
+      const messageDate = new Date(timestamp);
+      
+      if (isNaN(messageDate.getTime())) {
+        return '';
+      }
+      
+      const nowMs = Date.now();
+      const messageDateMs = messageDate.getTime();
+      const diffMs = nowMs - messageDateMs;
+      
+      if (diffMs < 0) {
+        return 'Just now';
+      }
+      
+      const diffSecs = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSecs / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffSecs < 60) {
+        return 'Just now';
+      }
+      
+      if (diffMins < 60) {
+        return `${diffMins}m ago`;
+      }
+      
+      if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      }
+      
+      if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      }
+      
+      return messageDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error formatting timestamp:', error);
       return '';
     }
-    
-    // Get current time in UTC milliseconds
-    const nowMs = Date.now();
-    const messageDateMs = messageDate.getTime();
-    
-    // Calculate difference in milliseconds
-    const diffMs = nowMs - messageDateMs;
-    
-    // Handle future timestamps (shouldn't happen but be safe)
-    if (diffMs < 0) {
-      return 'Just now';
-    }
-    
-    const diffSecs = Math.floor(diffMs / 1000);
-    const diffMins = Math.floor(diffSecs / 60);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    // Less than 1 minute
-    if (diffSecs < 60) {
-      return 'Just now';
-    }
-    
-    // Less than 1 hour
-    if (diffMins < 60) {
-      return `${diffMins}m ago`;
-    }
-    
-    // Less than 24 hours
-    if (diffHours < 24) {
-      return `${diffHours}h ago`;
-    }
-    
-    // Less than 7 days
-    if (diffDays < 7) {
-      return `${diffDays}d ago`;
-    }
-    
-    // Older than 7 days - show date
-    return messageDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  } catch (error) {
-    console.error('Error formatting timestamp:', error);
-    return '';
-  }
-};
+  };
 
-const getReadableTime = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    const date = new Date(timestamp);
+  const getReadableTime = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
+    try {
+      const date = new Date(timestamp);
+      
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+      
+      return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error formatting readable time:', error);
+      return '';
     }
-    
-    // Display in user's local timezone (IST)
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  } catch (error) {
-    console.error('Error formatting readable time:', error);
-    return '';
-  }
-};
+  };
 
-// ❌ REMOVE the testTimestamp function and its useEffect call - it's just for debugging
   const filteredMessages = searchQuery
     ? messages.filter(m => m?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
     : messages;
@@ -404,9 +458,9 @@ const getReadableTime = (timestamp) => {
               
               <div className="relative">
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
-                  isGroup ? 'from-purple-500 to-pink-600' : 'from-blue-500 to-cyan-600'
+                  isAnonymous ? 'from-gray-500 to-gray-700' : isGroup ? 'from-purple-500 to-pink-600' : 'from-blue-500 to-cyan-600'
                 } flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
-                  {isGroup ? <Users className="w-6 h-6" /> : conversationInfo?.name?.charAt(0).toUpperCase() || '?'}
+                  {isAnonymous ? <Shield className="w-6 h-6" /> : (isGroup ? <Users className="w-6 h-6" /> : conversationInfo?.name?.charAt(0).toUpperCase() || '?')}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full"></div>
               </div>
@@ -414,6 +468,19 @@ const getReadableTime = (timestamp) => {
               <div>
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   {conversationInfo?.name || 'Chat'}
+                  {/* ✨ NEW: Anonymous badge */}
+                  {isAnonymous && !identityRevealed && (
+                    <span className="text-xs bg-gray-500/20 text-gray-300 px-2 py-1 rounded-full flex items-center gap-1">
+                      <Shield className="w-3 h-3" />
+                      Anonymous
+                    </span>
+                  )}
+                  {isAnonymous && identityRevealed && (
+                    <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      Revealed
+                    </span>
+                  )}
                   {isGroup && (
                     <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
                       {conversationInfo?.participants?.length} members
@@ -434,6 +501,35 @@ const getReadableTime = (timestamp) => {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* ✨ NEW: Anonymous actions */}
+              {isAnonymous && (
+                <>
+                  {!identityRevealed && (
+                    <button
+                      onClick={handleRevealRequest}
+                      className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-blue-400"
+                      title="Request identity reveal"
+                    >
+                      <Eye className="w-5 h-5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowRatingModal(true)}
+                    className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-yellow-400"
+                    title="Rate user"
+                  >
+                    <Star className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setShowReportModal(true)}
+                    className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-red-400"
+                    title="Report user"
+                  >
+                    <Flag className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+              
               <button
                 onClick={() => setShowSearch(!showSearch)}
                 className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors text-slate-300"
@@ -462,6 +558,22 @@ const getReadableTime = (timestamp) => {
               </button>
             </div>
           </div>
+
+          {/* ✨ NEW: Reveal status banner */}
+          {isAnonymous && !identityRevealed && revealRequests.length > 0 && !revealRequests.includes(userId) && (
+            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center justify-between">
+              <div className="flex items-center gap-2 text-blue-300 text-sm">
+                <Eye className="w-4 h-4" />
+                <span>Someone requested to reveal identities</span>
+              </div>
+              <button
+                onClick={handleRevealRequest}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm transition-colors"
+              >
+                Approve
+              </button>
+            </div>
+          )}
 
           {/* Search Bar */}
           {showSearch && (
@@ -513,6 +625,17 @@ const getReadableTime = (timestamp) => {
           ) : (
             filteredMessages.map((msg, index) => {
               if (!msg || !msg.message_id) return null;
+
+              // Handle system messages
+              if (msg.system) {
+                return (
+                  <div key={msg.message_id} className="flex justify-center py-2">
+                    <div className="text-center text-slate-500 text-xs italic bg-slate-700/30 px-3 py-1 rounded-full max-w-md">
+                      {msg.content}
+                    </div>
+                  </div>
+                );
+              }
 
               const isMyMessage = String(msg.sender_id) === String(userId);
               const showAvatar = !isMyMessage && (index === 0 || filteredMessages[index - 1]?.sender_id !== msg.sender_id);
@@ -729,13 +852,13 @@ const getReadableTime = (timestamp) => {
 
             <div className="text-center mb-6">
               <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br ${
-                isGroup ? 'from-purple-500 to-pink-600' : 'from-blue-500 to-cyan-600'
+                isAnonymous ? 'from-gray-500 to-gray-700' : isGroup ? 'from-purple-500 to-pink-600' : 'from-blue-500 to-cyan-600'
               } flex items-center justify-center text-3xl shadow-xl mb-4`}>
-                {isGroup ? <Users className="w-10 h-10 text-white" /> : conversationInfo.name?.charAt(0).toUpperCase() || '?'}
+                {isAnonymous ? <Shield className="w-10 h-10 text-white" /> : (isGroup ? <Users className="w-10 h-10 text-white" /> : conversationInfo.name?.charAt(0).toUpperCase() || '?')}
               </div>
               <h3 className="text-xl font-bold text-white mb-1">{conversationInfo.name || 'Chat'}</h3>
               <p className="text-sm text-slate-400">
-                {isGroup ? `${conversationInfo.participants?.length || 0} members` : 'Direct Message'}
+                {isAnonymous && !identityRevealed ? 'Anonymous Chat' : isGroup ? `${conversationInfo.participants?.length || 0} members` : 'Direct Message'}
               </p>
             </div>
 
@@ -769,6 +892,154 @@ const getReadableTime = (timestamp) => {
               <button className="w-full flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg transition-all text-left">
                 <span className="text-sm text-slate-300">Notifications</span>
                 <ChevronDown className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✨ NEW: Rating Modal */}
+      {showRatingModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-slate-700">
+            <div className="p-6 border-b border-slate-700 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                Rate Anonymous User
+              </h2>
+              <button
+                onClick={() => setShowRatingModal(false)}
+                className="p-2 hover:bg-slate-700/50 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-3">
+                  How was your experience?
+                </label>
+                <div className="flex justify-center gap-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className="transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-10 h-10 ${
+                          star <= rating
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-slate-600'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Feedback (Optional)
+                </label>
+                <textarea
+                  value={ratingFeedback}
+                  onChange={(e) => setRatingFeedback(e.target.value)}
+                  placeholder="Share your experience..."
+                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-24"
+                  maxLength={500}
+                />
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-700 flex gap-3">
+              <button
+                onClick={() => setShowRatingModal(false)}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRateUser}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white rounded-xl font-medium transition-all"
+              >
+                Submit Rating
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✨ NEW: Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-slate-700">
+            <div className="p-6 border-b border-slate-700 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Flag className="w-5 h-5" />
+                Report User
+              </h2>
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="p-2 hover:bg-slate-700/50 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Reason for Report *
+                </label>
+                <select
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="">Select a reason</option>
+                  <option value="harassment">Harassment or Bullying</option>
+                  <option value="spam">Spam</option>
+                  <option value="inappropriate">Inappropriate Content</option>
+                  <option value="threats">Threats or Violence</option>
+                  <option value="impersonation">Impersonation</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Additional Details (Optional)
+                </label>
+                <textarea
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  placeholder="Provide more context..."
+                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none h-24"
+                  maxLength={1000}
+                />
+              </div>
+
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <p className="text-xs text-red-300">
+                  False reports may result in restrictions to your account.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-700 flex gap-3">
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReportUser}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium transition-all"
+              >
+                Submit Report
               </button>
             </div>
           </div>

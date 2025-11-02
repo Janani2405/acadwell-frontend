@@ -558,3 +558,210 @@ export const groupsApi = {
     }
   }
 };
+
+
+// Add to frontend/src/api/api.js
+
+// ==================== ANONYMOUS API ====================
+export const anonymousApi = {
+  // Initialize anonymous profile
+  initProfile: async (profileData) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      return await apiCall('/api/anonymous/init', {
+        method: 'POST',
+        body: JSON.stringify(profileData)
+      });
+    } catch (error) {
+      console.error('Error initializing anonymous profile:', error);
+      throw error;
+    }
+  },
+
+  // Get my anonymous profile
+  getMyProfile: async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      return await apiCall('/api/anonymous/profile/me', {
+        method: 'GET'
+      });
+    } catch (error) {
+      console.error('Error fetching anonymous profile:', error);
+      throw error;
+    }
+  },
+
+  // Discover anonymous peers
+  discoverPeers: async (filters = {}) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const queryParams = new URLSearchParams();
+      if (filters.subject) queryParams.append('subject', filters.subject);
+      if (filters.role) queryParams.append('role', filters.role);
+      if (filters.tags && Array.isArray(filters.tags)) {
+        filters.tags.forEach(tag => queryParams.append('tags', tag));
+      }
+
+      const url = `/api/anonymous/discover${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+
+      return await apiCall(url, {
+        method: 'GET'
+      });
+    } catch (error) {
+      console.error('Error discovering peers:', error);
+      throw error;
+    }
+  },
+
+  // Start anonymous conversation
+  startAnonymousChat: async (anonId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!anonId) {
+        throw new Error('anonId is required');
+      }
+
+      return await apiCall('/api/anonymous/start', {
+        method: 'POST',
+        body: JSON.stringify({ anonId })
+      });
+    } catch (error) {
+      console.error('Error starting anonymous chat:', error);
+      throw error;
+    }
+  },
+
+  // Request identity reveal
+  requestReveal: async (conversationId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      return await apiCall('/api/anonymous/reveal/request', {
+        method: 'POST',
+        body: JSON.stringify({ conversation_id: conversationId })
+      });
+    } catch (error) {
+      console.error('Error requesting reveal:', error);
+      throw error;
+    }
+  },
+
+  // Rate anonymous user
+  rateUser: async (conversationId, rating, feedback = '') => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!conversationId || !rating) {
+        throw new Error('conversationId and rating are required');
+      }
+
+      if (rating < 1 || rating > 5) {
+        throw new Error('Rating must be between 1 and 5');
+      }
+
+      return await apiCall('/api/anonymous/rate', {
+        method: 'POST',
+        body: JSON.stringify({
+          conversation_id: conversationId,
+          rating,
+          feedback
+        })
+      });
+    } catch (error) {
+      console.error('Error rating user:', error);
+      throw error;
+    }
+  },
+
+  // Report anonymous user
+  reportUser: async (conversationId, reason, details = '') => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!conversationId || !reason) {
+        throw new Error('conversationId and reason are required');
+      }
+
+      return await apiCall('/api/anonymous/report', {
+        method: 'POST',
+        body: JSON.stringify({
+          conversation_id: conversationId,
+          reason,
+          details
+        })
+      });
+    } catch (error) {
+      console.error('Error reporting user:', error);
+      throw error;
+    }
+  },
+
+  // Block anonymous user
+  blockUser: async (anonId) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!anonId) {
+        throw new Error('anonId is required');
+      }
+
+      return await apiCall('/api/anonymous/block', {
+        method: 'POST',
+        body: JSON.stringify({ anonId })
+      });
+    } catch (error) {
+      console.error('Error blocking user:', error);
+      throw error;
+    }
+  },
+
+  // Update anonymous status
+  updateStatus: async (status) => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!['available', 'busy', 'invisible'].includes(status)) {
+        throw new Error('Invalid status');
+      }
+
+      return await apiCall('/api/anonymous/status', {
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      });
+    } catch (error) {
+      console.error('Error updating status:', error);
+      throw error;
+    }
+  }
+};

@@ -1,10 +1,12 @@
+// frontend/src/components/ui/messages/MessagesPage.jsx
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiCall, groupsApi } from '../../../api/api';
 import { 
   Search, MessageSquarePlus, Users, Clock, CheckCheck, Pin, MoreVertical, 
-  Plus, BookOpen, Globe, Lock, MessageCircle, X 
+  Plus, BookOpen, Globe, Lock, MessageCircle, X, Shield 
 } from 'lucide-react';
+import AnonymousDiscovery from './AnonymousDiscovery';
 
 const MessagesPage = () => {
   const [conversations, setConversations] = useState([]);
@@ -13,7 +15,7 @@ const MessagesPage = () => {
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [activeTab, setActiveTab] = useState('all'); // all, unread, groups
+  const [activeTab, setActiveTab] = useState('all'); // all, unread, groups, anonymous
   const token = localStorage.getItem('token');
   const currentUserId = localStorage.getItem('user_id');
   const navigate = useNavigate();
@@ -141,8 +143,8 @@ const MessagesPage = () => {
       const matchesSearch = conv.other_preview.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            (conv.last_message && conv.last_message.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      if (activeTab === 'groups') {
-        return false; // Handled separately in groups section
+      if (activeTab === 'groups' || activeTab === 'anonymous') {
+        return false; // Handled separately
       }
       
       if (activeTab === 'unread') {
@@ -184,86 +186,77 @@ const MessagesPage = () => {
     );
   };
 
-// ✅ CORRECTED formatTimestamp function for MessagesPage.jsx
-// Replace your existing formatTimestamp function with this
-
-const formatTimestamp = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    // Parse the UTC timestamp from backend
-    const messageDate = new Date(timestamp);
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(messageDate.getTime())) {
+    try {
+      const messageDate = new Date(timestamp);
+      
+      if (isNaN(messageDate.getTime())) {
+        return '';
+      }
+      
+      const nowMs = Date.now();
+      const messageDateMs = messageDate.getTime();
+      const diffMs = nowMs - messageDateMs;
+      
+      if (diffMs < 0) {
+        return 'Just now';
+      }
+      
+      const diffSecs = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSecs / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffSecs < 60) {
+        return 'Just now';
+      }
+      if (diffMins < 60) {
+        return `${diffMins}m`;
+      }
+      if (diffHours < 24) {
+        return `${diffHours}h`;
+      }
+      if (diffDays < 7) {
+        return `${diffDays}d`;
+      }
+      
+      return messageDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    } catch (error) {
+      console.error('Error formatting timestamp:', error, timestamp);
       return '';
     }
-    
-    // Get current time in UTC milliseconds
-    const nowMs = Date.now();
-    const messageDateMs = messageDate.getTime();
-    
-    // Calculate difference in milliseconds
-    const diffMs = nowMs - messageDateMs;
-    
-    // Handle future timestamps (shouldn't happen but be safe)
-    if (diffMs < 0) {
-      return 'Just now';
-    }
-    
-    const diffSecs = Math.floor(diffMs / 1000);
-    const diffMins = Math.floor(diffSecs / 60);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffSecs < 60) {
-      return 'Just now';
-    }
-    if (diffMins < 60) {
-      return `${diffMins}m`;
-    }
-    if (diffHours < 24) {
-      return `${diffHours}h`;
-    }
-    if (diffDays < 7) {
-      return `${diffDays}d`;
-    }
-    
-    // For messages older than 7 days, show the date
-    return messageDate.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  } catch (error) {
-    console.error('Error formatting timestamp:', error, timestamp);
-    return '';
-  }
-};
+  };
 
-const getFullTimestamp = (timestamp) => {
-  if (!timestamp) return '';
-  
-  try {
-    const date = new Date(timestamp);
+  const getFullTimestamp = (timestamp) => {
+    if (!timestamp) return '';
     
-    if (isNaN(date.getTime())) {
+    try {
+      const date = new Date(timestamp);
+      
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error getting full timestamp:', error);
       return '';
     }
-    
-    // Display in user's local timezone (IST)
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  } catch (error) {
-    console.error('Error getting full timestamp:', error);
-    return '';
-  }
-};
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
@@ -308,7 +301,7 @@ const getFullTimestamp = (timestamp) => {
 
           {/* Tabs */}
           <div className="flex gap-2 mt-4">
-            {['all', 'unread', 'groups'].map(tab => (
+            {['all', 'unread', 'groups', 'anonymous'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -321,6 +314,7 @@ const getFullTimestamp = (timestamp) => {
                 {tab === 'all' && <MessageSquarePlus className="w-4 h-4" />}
                 {tab === 'unread' && <Clock className="w-4 h-4" />}
                 {tab === 'groups' && <BookOpen className="w-4 h-4" />}
+                {tab === 'anonymous' && <Shield className="w-4 h-4" />}
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
@@ -332,7 +326,7 @@ const getFullTimestamp = (timestamp) => {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* CONVERSATIONS TAB */}
-          {activeTab !== 'groups' && (
+          {activeTab !== 'groups' && activeTab !== 'anonymous' && (
             <>
               {filteredConversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400">
@@ -347,6 +341,7 @@ const getFullTimestamp = (timestamp) => {
                   {filteredConversations.map(conv => {
                     const isGroup = conv.participants && conv.participants.length > 2;
                     const unreadCount = conv.unread_count || 0;
+                    const isAnonymous = conv.isAnonymous || false;
                     
                     return (
                       <Link
@@ -362,13 +357,17 @@ const getFullTimestamp = (timestamp) => {
                           {/* Avatar */}
                           <div className="relative flex-shrink-0">
                             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
-                              isGroup 
+                              isAnonymous
+                                ? 'from-gray-500 to-gray-700'
+                                : isGroup 
                                 ? 'from-purple-500 to-pink-600' 
                                 : 'from-blue-500 to-cyan-600'
                             } flex items-center justify-center text-white font-semibold text-lg shadow-lg ${
                               unreadCount > 0 ? 'ring-2 ring-blue-400' : ''
                             }`}>
-                              {isGroup ? (
+                              {isAnonymous ? (
+                                <Shield className="w-6 h-6" />
+                              ) : isGroup ? (
                                 <Users className="w-6 h-6" />
                               ) : (
                                 conv.other_preview.charAt(0).toUpperCase()
@@ -379,7 +378,6 @@ const getFullTimestamp = (timestamp) => {
                                 <Pin className="w-3 h-3 text-white" />
                               </div>
                             )}
-                            {/* ✅ Unread indicator dot */}
                             {unreadCount > 0 && (
                               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-slate-900 rounded-full"></div>
                             )}
@@ -392,6 +390,12 @@ const getFullTimestamp = (timestamp) => {
                                 unreadCount > 0 ? 'text-white' : 'text-white'
                               }`}>
                                 {conv.other_preview}
+                                {isAnonymous && (
+                                  <span className="text-xs bg-gray-500/20 text-gray-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                    <Shield className="w-3 h-3" />
+                                    Anonymous
+                                  </span>
+                                )}
                                 {isGroup && (
                                   <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">
                                     Group
@@ -399,7 +403,6 @@ const getFullTimestamp = (timestamp) => {
                                 )}
                               </h3>
                               <div className="flex items-center gap-2 flex-shrink-0">
-                                {/* ✅ Unread count badge */}
                                 {unreadCount > 0 && (
                                   <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center animate-pulse">
                                     {unreadCount}
@@ -570,6 +573,11 @@ const getFullTimestamp = (timestamp) => {
                 </>
               )}
             </>
+          )}
+
+          {/* ANONYMOUS TAB */}
+          {activeTab === 'anonymous' && (
+            <AnonymousDiscovery onStartChat={(convId) => navigate(`/messages/${convId}`)} />
           )}
         </div>
       </div>
