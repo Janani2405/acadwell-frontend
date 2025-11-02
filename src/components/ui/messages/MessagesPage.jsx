@@ -186,51 +186,53 @@ const MessagesPage = () => {
     );
   };
 
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return '';
+// Replace the formatTimestamp function in MessagesPage.jsx with this:
+
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return '';
+  
+  try {
+    const messageDate = new Date(timestamp);
     
-    try {
-      const messageDate = new Date(timestamp);
-      
-      if (isNaN(messageDate.getTime())) {
-        return '';
-      }
-      
-      const nowMs = Date.now();
-      const messageDateMs = messageDate.getTime();
-      const diffMs = nowMs - messageDateMs;
-      
-      if (diffMs < 0) {
-        return 'Just now';
-      }
-      
-      const diffSecs = Math.floor(diffMs / 1000);
-      const diffMins = Math.floor(diffSecs / 60);
-      const diffHours = Math.floor(diffMins / 60);
-      const diffDays = Math.floor(diffHours / 24);
-      
-      if (diffSecs < 60) {
-        return 'Just now';
-      }
-      if (diffMins < 60) {
-        return `${diffMins}m`;
-      }
-      if (diffHours < 24) {
-        return `${diffHours}h`;
-      }
-      if (diffDays < 7) {
-        return `${diffDays}d`;
-      }
-      
-      return messageDate.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    } catch (error) {
-      console.error('Error formatting timestamp:', error, timestamp);
+    if (isNaN(messageDate.getTime())) {
       return '';
     }
-  };
+    
+    const nowMs = Date.now();
+    const messageDateMs = messageDate.getTime();
+    const diffMs = nowMs - messageDateMs;
+    
+    if (diffMs < 0) {
+      return 'Just now';
+    }
+    
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffSecs < 60) {
+      return 'Just now';
+    }
+    if (diffMins < 60) {
+      return `${diffMins}m`;
+    }
+    if (diffHours < 24) {
+      return `${diffHours}h`;
+    }
+    if (diffDays < 7) {
+      return `${diffDays}d`;
+    }
+    
+    return messageDate.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch (error) {
+    console.error('Error formatting timestamp:', error);
+    return '';
+  }
+};
 
   const getFullTimestamp = (timestamp) => {
     if (!timestamp) return '';

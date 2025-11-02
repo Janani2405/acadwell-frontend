@@ -358,82 +358,87 @@ const ChatRoom = () => {
     }
   };
 
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return '';
-    
-    try {
-      const messageDate = new Date(timestamp);
-      
-      if (isNaN(messageDate.getTime())) {
-        return '';
-      }
-      
-      const nowMs = Date.now();
-      const messageDateMs = messageDate.getTime();
-      const diffMs = nowMs - messageDateMs;
-      
-      if (diffMs < 0) {
-        return 'Just now';
-      }
-      
-      const diffSecs = Math.floor(diffMs / 1000);
-      const diffMins = Math.floor(diffSecs / 60);
-      const diffHours = Math.floor(diffMins / 60);
-      const diffDays = Math.floor(diffHours / 24);
-      
-      if (diffSecs < 60) {
-        return 'Just now';
-      }
-      
-      if (diffMins < 60) {
-        return `${diffMins}m ago`;
-      }
-      
-      if (diffHours < 24) {
-        return `${diffHours}h ago`;
-      }
-      
-      if (diffDays < 7) {
-        return `${diffDays}d ago`;
-      }
-      
-      return messageDate.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-    } catch (error) {
-      console.error('Error formatting timestamp:', error);
-      return '';
-    }
-  };
+// ✅ REPLACE ONLY THESE TWO FUNCTIONS IN ChatRoom.jsx
+// Find the existing formatTimestamp and getReadableTime functions and replace them with these:
 
-  const getReadableTime = (timestamp) => {
-    if (!timestamp) return '';
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return '';
+  
+  try {
+    const messageDate = new Date(timestamp);
     
-    try {
-      const date = new Date(timestamp);
-      
-      if (isNaN(date.getTime())) {
-        return 'Invalid date';
-      }
-      
-      return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      });
-    } catch (error) {
-      console.error('Error formatting readable time:', error);
+    if (isNaN(messageDate.getTime())) {
       return '';
     }
-  };
+    
+    const nowMs = Date.now();
+    const messageDateMs = messageDate.getTime();
+    const diffMs = nowMs - messageDateMs;
+    
+    if (diffMs < 0) {
+      return 'Just now';
+    }
+    
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffSecs < 60) {
+      return 'Just now';
+    }
+    
+    if (diffMins < 60) {
+      return `${diffMins}m ago`;
+    }
+    
+    if (diffHours < 24) {
+      return `${diffHours}h ago`;
+    }
+    
+    if (diffDays < 7) {
+      return `${diffDays}d ago`;
+    }
+    
+    return messageDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    console.error('Error formatting timestamp:', error);
+    return '';
+  }
+};
+
+const getReadableTime = (timestamp) => {
+  if (!timestamp) return '';
+  
+  try {
+    const date = new Date(timestamp);
+    
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    console.error('Error formatting readable time:', error);
+    return '';
+  }
+};
+
+
 
   const filteredMessages = searchQuery
     ? messages.filter(m => m?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
