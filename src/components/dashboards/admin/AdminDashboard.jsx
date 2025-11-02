@@ -11,7 +11,6 @@ import { Menu, X } from 'lucide-react';
 // Import components
 import AdminSidebar from './AdminSidebar';
 import AdminTopbar from './AdminTopbar';
-import AnonymousReports from './pages/AnonymousReports';
 
 // Import all pages
 import Overview from './pages/Overview';
@@ -20,6 +19,7 @@ import ContentModeration from './pages/ContentModeration';
 import WellnessMonitoring from './pages/WellnessMonitoring';
 import ActivityLogs from './pages/ActivityLogs';
 import Settings from './pages/Settings';
+import AnonymousReports from './pages/AnonymousReports'; // ✨ NEW - Added
 
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
             <Route path="messages" element={<ContentModeration />} />
             <Route path="wellness" element={<WellnessMonitoring />} />
             <Route path="activity" element={<ActivityLogs />} />
-            <Route path="anonymous-reports" element={<AnonymousReports />} />
+            <Route path="anonymous-reports" element={<AnonymousReports />} /> {/* ✨ NEW - Added route */}
             <Route path="settings" element={<Settings />} />
             
             {/* Catch all - redirect to overview */}

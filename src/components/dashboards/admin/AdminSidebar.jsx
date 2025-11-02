@@ -61,9 +61,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     },
     {
       name: 'Anonymous Reports',
-      path: '/admin/anonymous-reports',
+      path: '/admin/dashboard/anonymous-reports',  // ✅ FIXED: Correct path
       icon: Shield,
-      badge: null // Optional: You can add a badge count later
+      description: 'Anonymous user reports',  // ✅ ADDED: Description
+      badge: null
     },
     {
       name: 'Settings',
@@ -148,8 +149,15 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                       />
                       <div className="flex-1">
                         <p className="text-sm font-medium">{item.name}</p>
-                        <p className="text-xs opacity-75">{item.description}</p>
+                        {item.description && (
+                          <p className="text-xs opacity-75">{item.description}</p>
+                        )}
                       </div>
+                      {item.badge && (
+                        <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
+                          {item.badge}
+                        </span>
+                      )}
                     </>
                   )}
                 </NavLink>
