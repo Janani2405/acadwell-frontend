@@ -43,8 +43,10 @@ const Sidebar = ({ isSidebarOpen, closeSidebar }) => {
               </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
-              <HelpCircle className="nav-icon" />
-              <span>Questions</span>
+              <Link to="/community/askquestion" className="flex items-center space-x-3 w-full">
+                <HelpCircle className="nav-icon" />
+                <span>Questions</span>
+              </Link>  
             </li>
             <li className="nav-item" onClick={closeSidebar}>
               <Link to="/messages" className="flex items-center space-x-3 w-full">
@@ -53,8 +55,10 @@ const Sidebar = ({ isSidebarOpen, closeSidebar }) => {
               </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
-              <Activity className="nav-icon" />
-              <span>Wellness</span>
+              <Link to="/wellness/dashboard" className="flex items-center space-x-3 w-full">
+                <Activity className="nav-icon" />
+                <span>Wellness</span>
+              </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
               <Link to="/dashboard/student/grades" className="flex items-center space-x-3 w-full">
@@ -63,8 +67,10 @@ const Sidebar = ({ isSidebarOpen, closeSidebar }) => {
               </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
-              <BarChart className="nav-icon" />
-              <span>Analytics</span>
+              <Link to="/dashboard/student/statistics" className="flex items-center space-x-3 w-full">
+                <BarChart className="nav-icon" />
+                <span>Analytics</span>
+              </Link>
             </li>
             <li className="nav-item" onClick={closeSidebar}>
               <Link to="/community" className="flex items-center space-x-3 w-full">
