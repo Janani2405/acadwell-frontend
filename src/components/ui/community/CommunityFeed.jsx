@@ -198,7 +198,7 @@ const CommunityFeed = () => {
                   <div className="post-header">
                     <div className="author-info">
                       {post.is_anonymous ? (
-                        <span className="anonymous-badge">Anonymous</span>
+                        <span className="anonymous-badge">{post.author_name}</span>
                       ) : (
                         <>
                           <span className="author-name">{post.author_name}</span>
@@ -269,7 +269,7 @@ const CommunityFeed = () => {
                   <div className="post-header">
                     <div className="author-info">
                       {post.is_anonymous ? (
-                        <span className="anonymous-badge">Anonymous</span>
+                        <span className="anonymous-badge">{post.author_name}</span>
                       ) : (
                         <>
                           <span className="author-name">{post.author_name}</span>

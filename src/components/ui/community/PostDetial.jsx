@@ -1,4 +1,5 @@
-// PostDetail.jsx - Updated with all features
+// PostDetail.jsx - Part 1 of 3 (Lines 1-350)
+// Updated with anonymous reply functionality
 import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Heart, MessageSquare, Eye, Share2, Flag,
@@ -24,6 +25,7 @@ const PostDetail = () => {
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editContent, setEditContent] = useState({ title: '', description: '' });
+  const [replyIsAnonymous, setReplyIsAnonymous] = useState(false); // ✨ NEW
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportDescription, setReportDescription] = useState('');
@@ -147,13 +149,14 @@ const PostDetail = () => {
         method: 'POST',
         body: JSON.stringify({
           content: newReply,
-          is_anonymous: false,
+          is_anonymous: replyIsAnonymous,  // ✨ UPDATED
           parent_reply_id: replyToId
         })
       });
       
       setNewReply('');
       setReplyToId(null);
+      setReplyIsAnonymous(false);  // ✨ NEW: Reset anonymous state
       fetchPostDetail();
     } catch (err) {
       console.error('Error submitting reply:', err);
@@ -316,6 +319,8 @@ const PostDetail = () => {
 
   const isPostAuthor = String(post.author_id) === String(currentUser?.userId);
   const canModerate = currentUser?.role === 'teacher' || currentUser?.role === 'counselor';
+  // PostDetail.jsx - Part 2 of 3 (Lines 351-700)
+// This is the continuation - paste after Part 1
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -862,6 +867,8 @@ const PostDetail = () => {
                         </button>
                       )}
                     </div>
+                    // PostDetail.jsx - Part 3 of 3 (Lines 701-end)
+// This is the final part - paste after Part 2
 
                     {/* Nested Replies */}
                     {reply.nested_replies && reply.nested_replies.length > 0 && (
@@ -928,10 +935,13 @@ const PostDetail = () => {
                       <div style={{ marginTop: '16px', padding: '16px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                           <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#60a5fa' }}>
-                            Replying to {reply.author_name}
+                            Replying to {reply.is_anonymous ? 'Anonymous' : reply.author_name}
                           </span>
                           <button
-                            onClick={() => setReplyToId(null)}
+                            onClick={() => {
+                              setReplyToId(null);
+                              setReplyIsAnonymous(false);  // ✨ NEW: Reset on cancel
+                            }}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -943,6 +953,7 @@ const PostDetail = () => {
                             <X className="w-4 h-4" />
                           </button>
                         </div>
+                        
                         <textarea
                           value={newReply}
                           onChange={(e) => setNewReply(e.target.value)}
@@ -959,6 +970,21 @@ const PostDetail = () => {
                             marginBottom: '8px'
                           }}
                         />
+                        
+                        {/* ✨ NEW: Anonymous checkbox for nested reply */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <input
+                            type="checkbox"
+                            id={`anon-nested-${reply.reply_id}`}
+                            checked={replyIsAnonymous}
+                            onChange={(e) => setReplyIsAnonymous(e.target.checked)}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <label htmlFor={`anon-nested-${reply.reply_id}`} style={{ fontSize: '14px', cursor: 'pointer' }}>
+                            Reply anonymously
+                          </label>
+                        </div>
+                        
                         <button
                           onClick={handleSubmitReply}
                           disabled={!newReply.trim() || submitting}
@@ -973,7 +999,7 @@ const PostDetail = () => {
                             fontWeight: 'bold'
                           }}
                         >
-                          Post Reply
+                          {submitting ? 'Posting...' : 'Post Reply'}
                         </button>
                       </div>
                     )}
@@ -1003,6 +1029,33 @@ const PostDetail = () => {
               rows={6}
               disabled={replyToId !== null}
             />
+            
+            {/* ✨ NEW: Anonymous checkbox for main reply */}
+            {!replyToId && (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                marginTop: '12px',
+                padding: '12px',
+                background: 'rgba(30, 41, 59, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <input
+                  type="checkbox"
+                  id="reply-anonymous"
+                  checked={replyIsAnonymous}
+                  onChange={(e) => setReplyIsAnonymous(e.target.checked)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <label htmlFor="reply-anonymous" style={{ fontSize: '14px', cursor: 'pointer' }}>
+                  <span style={{ fontWeight: 'bold' }}>Post anonymously</span>
+                  <span style={{ display: 'block', fontSize: '12px', opacity: 0.7, marginTop: '2px' }}>
+                    Your identity will be hidden with a unique anonymous ID
+                  </span>
+                </label>
+              </div>
+            )}
             
             {replyToId && (
               <div style={{ 

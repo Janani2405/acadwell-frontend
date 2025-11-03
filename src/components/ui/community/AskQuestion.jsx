@@ -325,7 +325,7 @@ const AskQuestion = () => {
                   <label htmlFor="anonymous" className="privacy-label">
                     <div className="privacy-content">
                       <span className="privacy-title">Post anonymously</span>
-                      <span className="privacy-description">Your name won't be visible to other users</span>
+                      <span className="privacy-description">Your identity will be hidden with a unique anonymous ID</span>
                     </div>
                   </label>
                 </div>
