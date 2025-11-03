@@ -319,8 +319,7 @@ const PostDetail = () => {
 
   const isPostAuthor = String(post.author_id) === String(currentUser?.userId);
   const canModerate = currentUser?.role === 'teacher' || currentUser?.role === 'counselor';
-  // PostDetail.jsx - Part 2 of 3 (Lines 351-700)
-// This is the continuation - paste after Part 1
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -867,8 +866,7 @@ const PostDetail = () => {
                         </button>
                       )}
                     </div>
-                    // PostDetail.jsx - Part 3 of 3 (Lines 701-end)
-// This is the final part - paste after Part 2
+                    
 
                     {/* Nested Replies */}
                     {reply.nested_replies && reply.nested_replies.length > 0 && (
