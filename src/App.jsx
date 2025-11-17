@@ -46,6 +46,8 @@ import AdminDashboard from './components/dashboards/admin/AdminDashboard';
 
 import StudentStatistics from './components/ui/dashboards/student/StudentStatistics';
 
+import FunLearning from './components/ui/dashboards/student/FunLearning';
+
 import './App.css';
 
 function App() {
@@ -104,6 +106,8 @@ function App() {
 
           {/* Study Group Routes */}
           <Route path="/study-group/:groupId" element={<StudyGroupChat />} />
+          
+          <Route path="/dashboard/student/fun-learning" element={<FunLearning />} />
 
           {/* ✨ NEW: Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />

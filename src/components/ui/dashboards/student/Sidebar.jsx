@@ -15,6 +15,7 @@ import {
   MessageSquare,
   MessagesSquare,
   BarChart3,
+  PlayCircle,
   Shield  // NEW - Added for moderation
 } from 'lucide-react';
 
@@ -82,6 +83,12 @@ const Sidebar = ({ isSidebarOpen, closeSidebar }) => {
               <Link to="/messages" className="flex items-center space-x-3 w-full">
                 <MessageSquare className="nav-icon" />
                 <span>Messages</span>
+              </Link>
+            </li>
+            <li className="nav-item" onClick={closeSidebar}>
+              <Link to="/dashboard/student/fun-learning" className="flex items-center space-x-3 w-full">
+                <PlayCircle className="nav-icon" />
+                <span>Fun Learning</span>
               </Link>
             </li>
             
